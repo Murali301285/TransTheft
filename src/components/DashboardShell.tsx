@@ -13,7 +13,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     const isHomePage = pathname === '/dashboard/home';
     const isLCPage = pathname?.startsWith('/dashboard/lc-management');
     const isNeighborsPage = pathname === '/dashboard/neighbors';
-    const isFullWidthPage = isHomePage || isLCPage || isNeighborsPage;
+    const isHierarchyPage = pathname === '/dashboard/hierarchy';
+    const isFullWidthPage = isHomePage || isLCPage || isNeighborsPage || isHierarchyPage;
 
     return (
         <div className="min-h-screen bg-[hsl(var(--background))] flex flex-col relative overflow-hidden">
