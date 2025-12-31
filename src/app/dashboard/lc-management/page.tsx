@@ -10,6 +10,7 @@ import { Map, AlertTriangle, CheckCircle, XCircle, Search, Filter, MapPin, Play,
 import { useEffect } from 'react';
 import { clsx } from 'clsx';
 import { formatDate } from '@/lib/date-utils';
+import MapView from '@/components/Map';
 import { useRouter } from 'next/navigation';
 
 // Mock Data
@@ -292,36 +293,30 @@ export default function LCManagementPage() {
                         "rounded-xl border border-[hsl(var(--border))] bg-slate-100 relative overflow-hidden group transition-all duration-300",
                         maximizedPanel === 'map' ? "col-span-1" : "lg:col-span-7"
                     )}>
-                        {/* Placeholder Map Visual */}
-                        <div className="absolute inset-0 opacity-30 bg-[url('https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg')] bg-cover bg-center" />
+                        <MapView
+                            center={[12.9716, 77.5946]}
+                            zoom={12}
+                            markers={MOCK_DATA.map(m => ({
+                                id: m.id,
+                                lat: m.lat,
+                                lng: m.lng,
+                                title: m.name,
+                                status: m.status,
+                                description: `${m.circle} / ${m.division}`
+                            }))}
+                            onMarkerClick={(id) => router.push(`/dashboard/lc-management/${id}`)}
+                            className="h-full w-full"
+                        />
 
-                        <div className="absolute top-4 right-4 flex flex-col gap-2 z-10 items-end">
-                            <div className="flex gap-2">
-                                <button className="bg-white px-3 py-1 text-sm font-medium shadow-sm rounded-md hover:bg-gray-50">Map</button>
-                                <button className="bg-white px-3 py-1 text-sm font-medium shadow-sm rounded-md hover:bg-gray-50">Satellite</button>
-                            </div>
+                        <div className="absolute top-4 right-4 flex flex-col gap-2 z-[400] items-end pointer-events-none">
+                            {/* Controls Overlay - Pass pointer events to buttons */}
                             <button
                                 onClick={() => toggleMaximize('map')}
-                                className="bg-white p-2 text-gray-600 shadow-sm rounded-md hover:bg-gray-50 mt-2"
+                                className="bg-white p-2 text-gray-600 shadow-sm rounded-md hover:bg-gray-50 pointer-events-auto"
                                 title={maximizedPanel === 'map' ? "Minimize" : "Maximize"}
                             >
                                 {maximizedPanel === 'map' ? <Filter size={16} className="rotate-45" /> : <Filter size={16} className="-rotate-45" />}
                             </button>
-                        </div>
-
-                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <div className="text-center space-y-4 bg-white/80 backdrop-blur p-6 rounded-2xl shadow-xl pointer-events-auto">
-                                <Map size={48} className="mx-auto text-[hsl(var(--primary))]" />
-                                <div>
-                                    <h3 className="text-lg font-semibold text-[hsl(var(--foreground))]">Interactive Map View</h3>
-                                    <p className="text-sm text-[hsl(var(--muted-foreground))] max-w-xs mx-auto mt-2">
-                                        Google Maps integration pending API Key configuration.
-                                    </p>
-                                </div>
-                                <Button size="sm" onClick={() => alert('Please configure NEXT_PUBLIC_GOOGLE_MAPS_KEY')}>
-                                    Configure API
-                                </Button>
-                            </div>
                         </div>
                     </div>
                 )}

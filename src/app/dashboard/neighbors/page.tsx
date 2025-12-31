@@ -9,6 +9,7 @@ import { MapPin, Navigation, Download, Search, LocateFixed, CircleDot, Eye, Maxi
 import { useRouter } from 'next/navigation';
 import { clsx } from 'clsx';
 import * as XLSX from 'xlsx';
+import MapView from '@/components/Map';
 
 // Types
 interface Site {
@@ -254,28 +255,35 @@ export default function NeighboringSitesPage() {
             <div className="flex-1 relative bg-slate-100 overflow-hidden">
                 {/* Map Layer */}
                 <div className="absolute inset-0 z-0">
-                    <div className="absolute inset-0 bg-[url('/map-pattern.png')] opacity-10 pointer-events-none"></div>
-
-                    {/* Simulated Map Content */}
-                    {selectedSite ? (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="relative w-[30vw] h-[30vw] min-w-[300px] min-h-[300px] border-2 border-dashed border-blue-300 rounded-full flex items-center justify-center bg-blue-50/30 animate-pulse-slow">
-                                <div className="absolute w-4 h-4 bg-red-500 rounded-full shadow-lg z-10 animate-bounce"></div>
-                                <div className="absolute w-full h-full border border-blue-400 rounded-full opacity-30"></div>
-
-                                <span className="absolute -bottom-8 text-sm font-semibold text-blue-800 bg-white/80 px-2 py-1 rounded">
-                                    Visualizing {radiusFilter} Radius around {selectedSite.name}
-                                </span>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="absolute inset-0 flex items-center justify-center text-[hsl(var(--muted-foreground))]">
-                            <div className="text-center">
-                                <LocateFixed size={48} className="mx-auto mb-4 opacity-50" />
-                                <p>Select a center site to begin analysis</p>
-                            </div>
-                        </div>
-                    )}
+                    <MapView
+                        center={selectedSite ? [selectedSite.lat, selectedSite.lng] : [12.9716, 77.5946]}
+                        zoom={selectedSite ? 14 : 11}
+                        className="h-full w-full"
+                        markers={[
+                            ...(selectedSite ? [{
+                                id: selectedSite.id,
+                                lat: selectedSite.lat,
+                                lng: selectedSite.lng,
+                                title: selectedSite.name + ' (Center)',
+                                status: selectedSite.status,
+                                description: 'Selected Center'
+                            }] : []),
+                            ...neighbors.map(n => ({
+                                id: n.id,
+                                lat: n.lat,
+                                lng: n.lng,
+                                title: n.name,
+                                status: n.status,
+                                description: `${n.distance?.toFixed(2)} km away`
+                            }))
+                        ]}
+                        onMarkerClick={(id) => {
+                            // Optional: Navigate to detail? Or just show popup
+                            if (id !== selectedSiteId) {
+                                router.push(`/dashboard/lc-management/${id}`);
+                            }
+                        }}
+                    />
                 </div>
 
                 {/* Floating List Popup */}

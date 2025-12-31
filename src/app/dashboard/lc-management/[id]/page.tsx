@@ -9,6 +9,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { ArrowLeft, MapPin, AlertTriangle, Calendar, Info, Activity } from 'lucide-react';
 import { formatDate } from '@/lib/date-utils';
 import { clsx } from 'clsx';
+import MapView from '@/components/Map';
 
 // Types
 interface AlertRecord {
@@ -177,17 +178,20 @@ export default function TransformerDetailPage() {
                 </div>
 
                 {/* Right: Map View */}
-                <div className="h-[400px] lg:h-auto min-h-[300px] bg-slate-100 rounded-xl border border-[hsl(var(--border))] relative overflow-hidden flex items-center justify-center">
-                    <div className="absolute inset-0 bg-[url('/map-pattern.png')] opacity-10 pointer-events-none"></div>
-                    <div className="text-center">
-                        <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
-                            <MapPin size={32} />
-                        </div>
-                        <p className="text-[hsl(var(--muted-foreground))] font-medium">Transformer Map View</p>
-                        <p className="text-xs text-[hsl(var(--muted-foreground))] opacity-70">Interactive GIS Layer</p>
-                    </div>
-                    {/* Simulated Pin */}
-                    <div className="absolute top-1/2 left-1/2 -ml-2 -mt-2 w-4 h-4 bg-red-600 rounded-full border-2 border-white shadow-lg"></div>
+                <div className="h-[400px] lg:h-auto min-h-[300px] bg-slate-100 rounded-xl border border-[hsl(var(--border))] relative overflow-hidden">
+                    <MapView
+                        center={[DEMO_DETAILS.lat, DEMO_DETAILS.lng]}
+                        zoom={15}
+                        markers={[{
+                            id: DEMO_DETAILS.id,
+                            lat: DEMO_DETAILS.lat,
+                            lng: DEMO_DETAILS.lng,
+                            title: DEMO_DETAILS.name,
+                            status: 'active',
+                            description: DEMO_DETAILS.address
+                        }]}
+                        className="h-full w-full"
+                    />
                 </div>
             </div>
 

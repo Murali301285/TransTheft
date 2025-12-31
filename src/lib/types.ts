@@ -18,6 +18,10 @@ export interface HierarchyNode {
 }
 
 export interface TransformerDetails {
+    id: string;
+    name: string;
+    circle?: string;
+    division?: string;
     lat: number;
     lng: number;
     capacity: string;
