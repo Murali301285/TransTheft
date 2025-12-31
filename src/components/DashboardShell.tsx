@@ -11,11 +11,9 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const pathname = usePathname();
     const isHomePage = pathname === '/dashboard/home';
-    const isLCPage = pathname?.startsWith('/dashboard/lc-management');
-    const isAdminPage = pathname?.startsWith('/dashboard/admin');
-    const isNeighborsPage = pathname === '/dashboard/neighbors';
-    const isHierarchyPage = pathname === '/dashboard/hierarchy';
-    const isFullWidthPage = isHomePage || isLCPage || isNeighborsPage || isHierarchyPage || isAdminPage;
+
+    // Force full width layout for all pages as per user request
+    const isFullWidthPage = true;
 
     return (
         <div className="min-h-screen bg-[hsl(var(--background))] flex flex-col relative overflow-hidden">
