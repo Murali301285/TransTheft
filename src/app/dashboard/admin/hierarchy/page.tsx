@@ -2,8 +2,10 @@
 
 import { TreeItem } from '@/components/Hierarchy/TreeItem';
 import { HierarchyNode } from '@/lib/types';
-import { Search } from 'lucide-react';
+import { Search, ArrowLeft } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 // Deep Mock Data
@@ -63,6 +65,7 @@ const MOCK_HIERARCHY: HierarchyNode[] = [
 ];
 
 export default function HierarchyPage() {
+    const router = useRouter();
     const [searchTerm, setSearchTerm] = useState('');
 
     // In a real app, search would filter the tree structure.
@@ -71,6 +74,9 @@ export default function HierarchyPage() {
     return (
         <div className="h-[calc(100vh-8rem)] flex flex-col">
             <div className="mb-6">
+                <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/admin')} className="mb-2 pl-0 hover:bg-transparent text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
+                    <ArrowLeft size={16} className="mr-2" /> Back to Administration
+                </Button>
                 <h2 className="text-2xl font-bold">Network Hierarchy</h2>
                 <p className="text-[hsl(var(--muted-foreground))]">Visual representation of the transformer network</p>
             </div>

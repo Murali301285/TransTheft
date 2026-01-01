@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { DataTable } from '@/components/DataTable/DataTable';
 import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/Button';
-import { Plus, MapPin } from 'lucide-react';
+import { Plus, MapPin, ArrowLeft } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { clsx } from "clsx";
 
 // Type definition for Location (Circle/Division/SubDivision/Feeder)
@@ -55,10 +56,14 @@ const COLUMNS: ColumnDef<LocationMaster>[] = [
 ];
 
 export default function LocationMasterPage() {
+    const router = useRouter();
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <div>
+                    <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/admin')} className="mb-2 pl-0 hover:bg-transparent text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
+                        <ArrowLeft size={16} className="mr-2" /> Back to Administration
+                    </Button>
                     <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--secondary))]">
                         Location Master
                     </h2>

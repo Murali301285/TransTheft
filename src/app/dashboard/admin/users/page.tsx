@@ -5,9 +5,10 @@ import { DataTable } from '@/components/DataTable/DataTable';
 import { BulkUpload } from '@/components/Admin/BulkUpload';
 import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/Button';
-import { Plus, Upload, UserPlus } from 'lucide-react';
+import { Plus, Upload, UserPlus, ArrowLeft } from 'lucide-react';
 import { User } from '@/lib/types';
 import { clsx } from 'clsx';
+import { useRouter } from 'next/navigation';
 
 // Mock Data
 const MOCK_USERS: User[] = Array.from({ length: 25 }).map((_, i) => ({
@@ -42,6 +43,7 @@ const COLUMNS: ColumnDef<User>[] = [
 ];
 
 export default function UserManagementPage() {
+    const router = useRouter();
     const [view, setView] = useState<'list' | 'upload'>('list');
     const [users, setUsers] = useState<User[]>(MOCK_USERS);
 
@@ -66,6 +68,9 @@ export default function UserManagementPage() {
             {/* Page Header */}
             <div className="flex justify-between items-center mb-6">
                 <div>
+                    <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/admin')} className="mb-2 pl-0 hover:bg-transparent text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
+                        <ArrowLeft size={16} className="mr-2" /> Back to Administration
+                    </Button>
                     <h2 className="text-2xl font-bold">User Management</h2>
                     <p className="text-[hsl(var(--muted-foreground))]">Manage system access and roles</p>
                 </div>
