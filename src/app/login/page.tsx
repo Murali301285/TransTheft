@@ -28,8 +28,6 @@ export default function LoginPage() {
 
     const [formData, setFormData] = useState({ identifier: '', password: '' });
 
-
-
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
@@ -41,35 +39,35 @@ export default function LoginPage() {
             });
 
             if (response.success && response.data) {
-                // DEBUG: Check what the server actually returned
                 console.log('Login API Response:', response.data);
 
-                // Handle various casing or structures
-                const payload = response.data as any;
-                const token = payload.token || payload.Token || payload.accessToken || payload.result?.token;
-                const refreshToken = payload.refreshToken || payload.RefreshToken || payload.result?.refreshToken;
+                // Structure: { status: true, response: { accessToken: "..." } }
+                const apiData = response.data as any;
+                const innerResponse = apiData.response || apiData.result || apiData;
+
+                const token = innerResponse.accessToken || innerResponse.token || innerResponse.Token;
+                const refreshToken = innerResponse.refreshToken || innerResponse.RefreshToken;
 
                 if (!token) {
-                    window.alert('Login successful but No Token found in response. Check console for details.');
-                    console.error('Missing token in payload:', payload);
+                    console.error('Login Failed: No accessToken found in response', apiData);
+                    window.alert('Login failed: Server did not return an access token.');
                     setIsLoading(false);
                     return;
                 }
 
                 TokenService.setToken(token, refreshToken);
 
-                // In a real app, update this to decode JWT or fetch user details
                 login({
-                    id: '1',
-                    name: formData.identifier,
+                    id: innerResponse.userId?.toString() || '1',
+                    name: innerResponse.userName || formData.identifier,
                     email: formData.identifier,
-                    role: 'admin',
+                    role: innerResponse.role?.toLowerCase() || 'viewer',
                     permissions: ['all']
                 });
 
+                console.log('Login Successful. Token saved.');
                 router.push('/dashboard/home');
             } else {
-                // Show error (using window.alert for simplicity, usually Toast)
                 window.alert(response.message || 'Login Failed. Please check credentials.');
             }
         } catch (error) {
