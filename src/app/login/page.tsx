@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { Mail, Lock, Eye, EyeOff, Zap, ShieldCheck } from 'lucide-react';
+import { ApiService, TokenService } from '@/services/api';
 
 const BACKGROUNDS = [
     'bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900', // Deep Tech
@@ -27,23 +28,41 @@ export default function LoginPage() {
 
     const [formData, setFormData] = useState({ identifier: '', password: '' });
 
+
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
-        // Mock Login Delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        try {
+            const response = await ApiService.auth.login({
+                userName: formData.identifier,
+                password: formData.password
+            });
 
-        // Initialize Mock User
-        login({
-            id: '1',
-            name: 'Admin User',
-            email: formData.identifier,
-            role: 'admin',
-            permissions: ['all']
-        });
+            if (response.success && response.data) {
+                TokenService.setToken(response.data.token, response.data.refreshToken);
 
-        router.push('/dashboard/home');
+                // In a real app, update this to decode JWT or fetch user details
+                login({
+                    id: '1',
+                    name: formData.identifier,
+                    email: formData.identifier,
+                    role: 'admin',
+                    permissions: ['all']
+                });
+
+                router.push('/dashboard/home');
+            } else {
+                // Show error (using window.alert for simplicity, usually Toast)
+                window.alert(response.message || 'Login Failed. Please check credentials.');
+            }
+        } catch (error) {
+            console.error('Login Error', error);
+            window.alert('Network Error occurred.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (

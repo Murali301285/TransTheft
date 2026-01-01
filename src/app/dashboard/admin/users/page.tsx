@@ -42,25 +42,43 @@ const COLUMNS: ColumnDef<User>[] = [
     }
 ];
 
+import { ApiService } from '@/services/api';
+import { useEffect } from 'react';
+
+// ... (keep MOCK_USERS for fallback or remove)
+
 export default function UserManagementPage() {
     const router = useRouter();
     const [view, setView] = useState<'list' | 'upload'>('list');
-    const [users, setUsers] = useState<User[]>(MOCK_USERS);
+    const [users, setUsers] = useState<User[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            setIsLoading(true);
+            try {
+                const res = await ApiService.users.getAll();
+                if (res.success && res.data) {
+                    const mapped: User[] = res.data.map((u: any) => ({
+                        id: u.userId?.toString() || u.id || `USR-${Math.random()}`,
+                        name: u.fullName || u.userName || 'Unknown',
+                        email: u.email || 'N/A',
+                        role: u.roleName?.toLowerCase() || 'viewer', // Adjust mapping as needed
+                        permissions: []
+                    }));
+                    setUsers(mapped);
+                }
+            } catch (e) {
+                console.error(e);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchUsers();
+    }, []);
 
     const handleBulkCommit = async (data: any[]) => {
-        // Simulate API Call
-        await new Promise(r => setTimeout(r, 1000));
-
-        const newUsers = data.map((d: any, i) => ({
-            id: d.ID || `NEW-${Date.now()}-${i}`,
-            name: d.Name,
-            email: d.Email,
-            role: d.Role || 'viewer',
-            permissions: []
-        }));
-
-        setUsers(prev => [...newUsers, ...prev]);
-        setView('list');
+        // ... bulk upload logic
     };
 
     return (
@@ -91,7 +109,7 @@ export default function UserManagementPage() {
             <div className="flex-1 overflow-hidden">
                 {view === 'list' ? (
                     <div className="bg-white rounded-xl border border-[hsl(var(--border))] p-4 h-full overflow-hidden flex flex-col">
-                        <DataTable columns={COLUMNS} data={users} searchKey="name" />
+                        <DataTable columns={COLUMNS} data={users} searchKey="name" isLoading={isLoading} />
                     </div>
                 ) : (
                     <BulkUpload

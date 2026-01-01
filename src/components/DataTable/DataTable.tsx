@@ -24,12 +24,14 @@ interface DataTableProps<TData, TValue> {
     data: TData[];
     searchKey?: string;
     onExport?: () => void;
+    isLoading?: boolean;
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
     searchKey,
+    isLoading,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -169,7 +171,16 @@ export function DataTable<TData, TValue>({
                             ))}
                         </thead>
                         <tbody className="divide-y divide-[hsl(var(--border))]">
-                            {table.getRowModel().rows?.length ? (
+                            {isLoading ? (
+                                <tr>
+                                    <td colSpan={columns.length} className="h-24 text-center">
+                                        <div className="flex items-center justify-center gap-2 text-[hsl(var(--muted-foreground))]">
+                                            <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                                            Loading data...
+                                        </div>
+                                    </td>
+                                </tr>
+                            ) : table.getRowModel().rows?.length ? (
                                 table.getRowModel().rows.map((row) => (
                                     <tr
                                         key={row.id}

@@ -62,9 +62,46 @@ const COLUMNS: ColumnDef<TransformerMaster>[] = [
     }
 ];
 
+import { ApiService } from '@/services/api';
+import { useEffect } from 'react';
+
+// ... (keep TransformerMaster interface)
+
 export default function TransformerMasterPage() {
     const router = useRouter();
     const [isBulkMode, setIsBulkMode] = useState(false);
+    const [transformers, setTransformers] = useState<TransformerMaster[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            try {
+                const response = await ApiService.transformers.getAll();
+                if (response.success && response.data) {
+                    const mapped: TransformerMaster[] = response.data.map((item: any) => ({
+                        id: item.masterCode || `TR-${item.masterId}`,
+                        name: item.masterName || `Transformer ${item.masterId}`,
+                        capacity: '100 KVA', // Default as API doesn't have it yet
+                        circle: 'N/A',
+                        division: 'N/A',
+                        subDivision: 'N/A',
+                        lat: 0,
+                        lng: 0,
+                        installDate: item.installedOn || new Date().toISOString(),
+                        status: item.isOnline ? 'active' : 'inactive'
+                    }));
+                    setTransformers(mapped);
+                }
+            } catch (error) {
+                console.error("Failed to fetch transformers", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     return (
         <div className="space-y-6">
@@ -105,8 +142,9 @@ export default function TransformerMasterPage() {
                 ) : (
                     <DataTable
                         columns={COLUMNS}
-                        data={MOCK_TRANSFORMERS}
+                        data={transformers}
                         searchKey="name"
+                        isLoading={isLoading}
                     />
                 )}
             </div>
