@@ -59,13 +59,16 @@ export default function UserManagementPage() {
             try {
                 const res = await ApiService.users.getAll();
                 if (res.success && res.data) {
-                    const mapped: User[] = res.data.map((u: any) => ({
+                    const rawData = res.data as any;
+                    const list = Array.isArray(rawData) ? rawData : (rawData.response || rawData.result || []);
+
+                    const mapped: User[] = Array.isArray(list) ? list.map((u: any) => ({
                         id: u.userId?.toString() || u.id || `USR-${Math.random()}`,
                         name: u.fullName || u.userName || 'Unknown',
                         email: u.email || 'N/A',
-                        role: u.roleName?.toLowerCase() || 'viewer', // Adjust mapping as needed
+                        role: u.roleName?.toLowerCase() || 'viewer',
                         permissions: []
-                    }));
+                    })) : [];
                     setUsers(mapped);
                 }
             } catch (e) {

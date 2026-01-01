@@ -79,10 +79,21 @@ export default function TransformerMasterPage() {
             try {
                 const response = await ApiService.transformers.getAll();
                 if (response.success && response.data) {
-                    const mapped: TransformerMaster[] = response.data.map((item: any) => ({
+                    console.log('Transformers API Response:', response.data);
+
+                    const rawData = response.data as any;
+                    const list = Array.isArray(rawData) ? rawData : (rawData.response || rawData.result || []);
+
+                    if (!Array.isArray(list)) {
+                        console.error('Transformers API Error: Expected array, got:', rawData);
+                        setTransformers([]);
+                        return;
+                    }
+
+                    const mapped: TransformerMaster[] = list.map((item: any) => ({
                         id: item.masterCode || `TR-${item.masterId}`,
                         name: item.masterName || `Transformer ${item.masterId}`,
-                        capacity: '100 KVA', // Default as API doesn't have it yet
+                        capacity: '100 KVA',
                         circle: 'N/A',
                         division: 'N/A',
                         subDivision: 'N/A',
