@@ -103,42 +103,24 @@ export default function AdminDashboard() {
                 variants={container}
                 initial="hidden"
                 animate="show"
-                className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
             >
                 {ADMIN_MODULES.map((module) => {
                     const Icon = module.icon;
                     return (
                         <motion.div key={module.title} variants={item}>
                             <Link href={module.href} className="group block h-full">
-                                <div className={clsx(
-                                    "relative h-full p-6 rounded-2xl bg-[hsl(var(--surface))] border border-[hsl(var(--border))] overflow-hidden transition-all duration-300 hover:-translate-y-1",
-                                    "hover:shadow-xl", module.shadow
-                                )}>
-                                    {/* Gradient Blob Background */}
-                                    <div className={clsx(
-                                        "absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br opacity-10 group-hover:scale-150 transition-transform duration-500",
-                                        module.color
-                                    )} />
-
-                                    <div className="relative">
-                                        <div className={clsx(
-                                            "w-12 h-12 rounded-xl mb-4 flex items-center justify-center text-white bg-gradient-to-br shadow-lg",
-                                            module.color
-                                        )}>
-                                            <Icon size={24} />
-                                        </div>
-
-                                        <h3 className="text-xl font-bold mb-2 text-[hsl(var(--foreground))] group-hover:text-[hsl(var(--primary))] transition-colors">
-                                            {module.title}
-                                        </h3>
-                                        <p className="text-[hsl(var(--muted-foreground))] text-sm mb-6">
-                                            {module.description}
-                                        </p>
-
-                                        <div className="flex items-center text-sm font-semibold text-[hsl(var(--primary))] rounded-full bg-[hsl(var(--primary)/0.05)] w-fit px-4 py-2 group-hover:bg-[hsl(var(--primary))] group-hover:text-white transition-all">
-                                            Open Module <ArrowRight size={16} className="ml-2" />
-                                        </div>
+                                <div className="relative h-full p-4 rounded-xl bg-white border border-[hsl(var(--border))] hover:shadow-md transition-all duration-200">
+                                    <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
+                                        <Icon size={20} />
                                     </div>
+
+                                    <h3 className="font-bold text-[hsl(var(--foreground))] mb-1">
+                                        {module.title}
+                                    </h3>
+                                    <p className="text-[hsl(var(--muted-foreground))] text-xs">
+                                        {module.description}
+                                    </p>
                                 </div>
                             </Link>
                         </motion.div>
