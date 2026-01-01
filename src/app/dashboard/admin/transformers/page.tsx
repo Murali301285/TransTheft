@@ -1,13 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { DataTable } from '@/components/DataTable/DataTable';
 import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/Button';
+import { Switch } from '@/components/ui/Switch';
 import { Plus, Upload, HardDrive, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { BulkUpload } from '@/components/Admin/BulkUpload';
 import { formatDate } from '@/lib/date-utils';
+import { ApiService } from '@/services/api';
+import { toast } from 'sonner';
 
 // Type definition for Transformer Master
 export interface TransformerMaster {
@@ -24,54 +27,78 @@ export interface TransformerMaster {
     status: 'active' | 'inactive' | 'maintenance';
 }
 
-// Mock Data
-const MOCK_TRANSFORMERS: TransformerMaster[] = Array.from({ length: 20 }).map((_, i) => ({
-    id: `TR-${2000 + i}`,
-    name: `Transformer ${2000 + i}`,
-    capacity: '100 KVA',
-    circle: 'North Circle',
-    division: 'Div-1',
-    subDivision: 'SubDiv-Alpha',
-    lat: 12.97,
-    lng: 77.59,
-    installDate: '2024-01-15',
-    status: 'active'
-}));
-
-const COLUMNS: ColumnDef<TransformerMaster>[] = [
-    { accessorKey: 'id', header: 'Transformer ID' },
-    { accessorKey: 'name', header: 'Name' },
-    { accessorKey: 'capacity', header: 'Capacity' },
-    { accessorKey: 'circle', header: 'Circle' },
-    { accessorKey: 'division', header: 'Division' },
-    {
-        accessorKey: 'installDate',
-        header: 'Install Date',
-        cell: ({ row }) => formatDate(row.original.installDate)
-    },
-    { accessorKey: 'status', header: 'Status' },
-    {
-        id: 'actions',
-        header: 'Actions',
-        cell: () => (
-            <div className="flex gap-2">
-                <Button variant="ghost" size="sm">Edit</Button>
-                <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600">Delete</Button>
-            </div>
-        )
-    }
-];
-
-import { ApiService } from '@/services/api';
-import { useEffect } from 'react';
-
-// ... (keep TransformerMaster interface)
-
 export default function TransformerMasterPage() {
     const router = useRouter();
     const [isBulkMode, setIsBulkMode] = useState(false);
     const [transformers, setTransformers] = useState<TransformerMaster[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    const updateStatus = async (id: string, newStatus: boolean) => {
+        // Optimistic Update
+        setTransformers(prev => prev.map(t =>
+            t.id === id ? { ...t, status: newStatus ? 'active' : 'inactive' } : t
+        ));
+
+        // API Call
+        toast.promise(
+            ApiService.transformers.updateStatus(id, newStatus),
+            {
+                loading: 'Updating status...',
+                success: (response) => {
+                    if (!response.success) {
+                        // Throw to trigger error handling
+                        throw new Error(response.message || 'Update failed');
+                    }
+                    return 'Status updated successfully';
+                },
+                error: (err) => {
+                    // Revert
+                    setTransformers(prev => prev.map(t =>
+                        t.id === id ? { ...t, status: !newStatus ? 'active' : 'inactive' } : t
+                    ));
+                    return err instanceof Error ? err.message : 'Failed to update status';
+                }
+            }
+        );
+    };
+
+    const columns: ColumnDef<TransformerMaster>[] = useMemo(() => [
+        { accessorKey: 'id', header: 'Transformer ID' },
+        { accessorKey: 'name', header: 'Name' },
+        { accessorKey: 'capacity', header: 'Capacity' },
+        { accessorKey: 'circle', header: 'Circle' },
+        { accessorKey: 'division', header: 'Division' },
+        {
+            accessorKey: 'installDate',
+            header: 'Install Date',
+            cell: ({ row }) => formatDate(row.original.installDate)
+        },
+        {
+            accessorKey: 'status',
+            header: 'Status',
+            cell: ({ row }) => (
+                <div className="flex items-center gap-3">
+                    <Switch
+                        checked={row.original.status === 'active'}
+                        onCheckedChange={(checked) => updateStatus(row.original.id, checked)}
+                    />
+                    <span className={`text-xs font-medium ${row.original.status === 'active' ? 'text-green-600' : 'text-gray-500'}`}>
+                        {row.original.status === 'active' ? 'Active' : 'Inactive'}
+                    </span>
+                </div>
+            )
+        },
+        {
+            id: 'actions',
+            header: 'Actions',
+            cell: () => (
+                <div className="flex gap-2">
+                    <Button variant="ghost" size="sm">Edit</Button>
+                    <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600">Delete</Button>
+                </div>
+            )
+        }
+    ], []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -86,6 +113,7 @@ export default function TransformerMasterPage() {
 
                     if (!Array.isArray(list)) {
                         console.error('Transformers API Error: Expected array, got:', rawData);
+                        toast.error('Invalid data format received from server');
                         setTransformers([]);
                         return;
                     }
@@ -103,9 +131,12 @@ export default function TransformerMasterPage() {
                         status: item.isOnline ? 'active' : 'inactive'
                     }));
                     setTransformers(mapped);
+                } else {
+                    toast.error(response.message || 'Failed to fetch transformers');
                 }
             } catch (error) {
                 console.error("Failed to fetch transformers", error);
+                toast.error('Network Error: Could not fetch data');
             } finally {
                 setIsLoading(false);
             }
@@ -152,7 +183,7 @@ export default function TransformerMasterPage() {
                     />
                 ) : (
                     <DataTable
-                        columns={COLUMNS}
+                        columns={columns}
                         data={transformers}
                         searchKey="name"
                         isLoading={isLoading}

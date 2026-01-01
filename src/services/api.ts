@@ -111,6 +111,10 @@ export const ApiService = {
         },
         getById: async (id: number) => {
             return ApiService.get<MasterDTO>(`/api/MasterDevice/${id}`);
+        },
+        updateStatus: async (masterCode: string, isOnline: boolean) => {
+            // Placeholder: Adjust endpoint according to Swagger
+            return ApiService.post(`/api/MasterDevice/update-status`, { masterCode, isOnline });
         }
     },
 

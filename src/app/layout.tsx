@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   description: "Advanced IoT-based monitoring and alert system for power transformers. Real-time theft detection and secure hierarchy management.",
 };
 
+import { Toaster } from 'sonner';
+
+// ...
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -20,6 +23,7 @@ export default function RootLayout({
       <body className={inter.variable}>
         <Providers>
           {children}
+          <Toaster richColors position="top-right" />
         </Providers>
       </body>
     </html>
