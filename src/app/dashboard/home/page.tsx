@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Activity, ShieldAlert, FileBarChart, Users, Settings, GitBranch, ArrowRight } from 'lucide-react';
+import { Activity, ShieldAlert, FileBarChart, Users, Settings, ArrowRight } from 'lucide-react';
 import { clsx } from 'clsx';
 
 const SECTIONS = [
@@ -37,14 +37,6 @@ const SECTIONS = [
         href: '/dashboard/alerts',
         color: 'from-red-500 to-orange-400',
         shadow: 'shadow-red-500/20'
-    },
-    {
-        title: 'Hierarchy View',
-        description: 'Visualize the organization structure tree.',
-        icon: GitBranch,
-        href: '/dashboard/hierarchy',
-        color: 'from-indigo-500 to-blue-400',
-        shadow: 'shadow-indigo-500/20'
     }
 ];
 

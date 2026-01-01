@@ -28,8 +28,8 @@ const MOCK_HIERARCHY: HierarchyNode[] = [
                                 name: 'Feeder F1',
                                 type: 'feeder',
                                 children: [
-                                    { id: 'TR-101', name: 'Transformer 101', type: 'transformer', details: { lat: 0, lng: 0, capacity: '100', status: 'active', lastPing: '', address: '', nearestCustomers: [] } },
-                                    { id: 'TR-102', name: 'Transformer 102', type: 'transformer', details: { lat: 0, lng: 0, capacity: '100', status: 'alert', lastPing: '', address: '', nearestCustomers: [] } },
+                                    { id: 'TR-101', name: 'Transformer 101', type: 'transformer', details: { id: 'TR-101', name: 'Transformer 101', lat: 0, lng: 0, capacity: '100', status: 'active', lastPing: '', address: '', nearestCustomers: [] } },
+                                    { id: 'TR-102', name: 'Transformer 102', type: 'transformer', details: { id: 'TR-102', name: 'Transformer 102', lat: 0, lng: 0, capacity: '100', status: 'alert', lastPing: '', address: '', nearestCustomers: [] } },
                                 ]
                             }
                         ]
@@ -51,7 +51,7 @@ const MOCK_HIERARCHY: HierarchyNode[] = [
                                 name: 'Feeder F2',
                                 type: 'feeder',
                                 children: [
-                                    { id: 'TR-201', name: 'Transformer 201', type: 'transformer', details: { lat: 0, lng: 0, capacity: '250', status: 'active', lastPing: '', address: '', nearestCustomers: [] } },
+                                    { id: 'TR-201', name: 'Transformer 201', type: 'transformer', details: { id: 'TR-201', name: 'Transformer 201', lat: 0, lng: 0, capacity: '250', status: 'active', lastPing: '', address: '', nearestCustomers: [] } },
                                 ]
                             }
                         ]
