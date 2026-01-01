@@ -9,10 +9,13 @@ export interface LoginDTO {
 }
 
 export interface LoginResponse {
-    token: string;
-    refreshToken: string;
-    expiration: string;
-    // Add other fields if returned
+    token?: string;
+    Token?: string;
+    accessToken?: string;
+    refreshToken?: string;
+    RefreshToken?: string;
+    expiration?: string;
+    [key: string]: any;
 }
 
 export interface MasterDTO {
@@ -20,7 +23,7 @@ export interface MasterDTO {
     masterName: string;
     masterCode: string;
     isOnline: boolean;
-    // Add other DTO fields
+    installedOn?: string;
 }
 
 // --- Token Management ---
@@ -55,8 +58,10 @@ const getHeaders = () => {
         'Accept': 'application/json',
     };
     const token = TokenService.getToken();
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`; // Assuming Bearer token
+    if (token && token !== 'undefined' && token !== 'null') {
+        headers['Authorization'] = `Bearer ${token}`;
+    } else {
+        console.warn('API Request: No valid token found in storage.');
     }
     return headers;
 };

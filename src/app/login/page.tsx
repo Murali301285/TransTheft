@@ -41,7 +41,22 @@ export default function LoginPage() {
             });
 
             if (response.success && response.data) {
-                TokenService.setToken(response.data.token, response.data.refreshToken);
+                // DEBUG: Check what the server actually returned
+                console.log('Login API Response:', response.data);
+
+                // Handle various casing or structures
+                const payload = response.data as any;
+                const token = payload.token || payload.Token || payload.accessToken || payload.result?.token;
+                const refreshToken = payload.refreshToken || payload.RefreshToken || payload.result?.refreshToken;
+
+                if (!token) {
+                    window.alert('Login successful but No Token found in response. Check console for details.');
+                    console.error('Missing token in payload:', payload);
+                    setIsLoading(false);
+                    return;
+                }
+
+                TokenService.setToken(token, refreshToken);
 
                 // In a real app, update this to decode JWT or fetch user details
                 login({
