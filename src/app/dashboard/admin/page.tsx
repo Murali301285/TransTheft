@@ -84,7 +84,14 @@ const container = {
 
 const item = {
     hidden: { y: 20, opacity: 0 },
-    show: { y: 0, opacity: 1 }
+    show: {
+        y: 0,
+        opacity: 1,
+        transition: {
+            type: "spring" as const,
+            stiffness: 100
+        }
+    }
 };
 
 export default function AdminDashboard() {
@@ -108,7 +115,11 @@ export default function AdminDashboard() {
                 {ADMIN_MODULES.map((module) => {
                     const Icon = module.icon;
                     return (
-                        <motion.div key={module.title} variants={item}>
+                        <motion.div
+                            key={module.title}
+                            variants={item}
+                            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                        >
                             <Link href={module.href} className="group block h-full">
                                 <div className="relative h-full p-4 rounded-xl bg-white border border-[hsl(var(--border))] hover:shadow-md transition-all duration-200">
                                     <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
