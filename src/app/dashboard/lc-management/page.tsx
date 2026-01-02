@@ -1,39 +1,31 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { DataTable } from '@/components/DataTable/DataTable';
 import { ColumnDef } from '@tanstack/react-table';
 import { TransformerDetails } from '@/lib/types';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Map, AlertTriangle, CheckCircle, XCircle, Search, Filter, MapPin, Play, Pause, RotateCcw } from 'lucide-react';
-import { useEffect } from 'react';
+import { Map, AlertTriangle, CheckCircle, XCircle, Search, Filter, MapPin, Play, Pause, RotateCcw, Zap } from 'lucide-react';
 import { clsx } from 'clsx';
 import { formatDate } from '@/lib/date-utils';
 import MapView from '@/components/Map';
 import { useRouter } from 'next/navigation';
+import { ApiService } from '@/services/api';
 
-// Mock Data
-const MOCK_DATA: TransformerDetails[] & { id: string; name: string; circle: string; division: string }[] = Array.from({ length: 50 }).map((_, i) => ({
-    id: `TR-${1000 + i}`,
-    name: `Transformer ${1000 + i}`,
-    circle: i % 2 === 0 ? 'North Circle' : 'South Circle',
-    division: `Div-${i % 5}`,
-    lat: 12.9716 + (Math.random() * 0.1),
-    lng: 77.5946 + (Math.random() * 0.1),
-    capacity: '100 KVA',
-    status: i % 10 === 0 ? 'alert' : i % 5 === 0 ? 'inactive' : 'active',
-    lastPing: new Date().toISOString(),
-    address: `Street ${i}, Benson Town`,
-    nearestCustomers: []
-}));
-
-
+// Extended type for Grid Display including hierarchy info
+type TransformerGridItem = TransformerDetails & { circle: string; division: string };
 
 export default function LCManagementPage() {
     const router = useRouter();
+    const [transformers, setTransformers] = useState<TransformerGridItem[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [timeLeft, setTimeLeft] = useState(60);
+    const [isPaused, setIsPaused] = useState(false);
+    const [maximizedPanel, setMaximizedPanel] = useState<'none' | 'grid' | 'map'>('none');
 
-    const columns = useMemo<ColumnDef<typeof MOCK_DATA[0]>[]>(() => [
+    const columns = useMemo<ColumnDef<TransformerGridItem>[]>(() => [
         { accessorKey: 'id', header: 'Transformer ID' },
         { accessorKey: 'name', header: 'Name' },
         { accessorKey: 'circle', header: 'Circle' },
@@ -42,7 +34,7 @@ export default function LCManagementPage() {
             accessorKey: 'status',
             header: 'Status',
             cell: ({ row }) => {
-                const status = row.original.status;
+                const status = row.original.status as string;
                 return (
                     <span className={clsx(
                         "px-2 py-1 rounded-full text-xs font-medium uppercase border",
@@ -74,32 +66,62 @@ export default function LCManagementPage() {
             )
         }
     ], [router]);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [timeLeft, setTimeLeft] = useState(60);
-    const [isPaused, setIsPaused] = useState(false);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            try {
+                const response = await ApiService.transformers.getAll();
+                if (response.success && response.data) {
+                    const rawData = response.data as any;
+                    const list = Array.isArray(rawData) ? rawData : (rawData.response || rawData.result || []);
+
+                    if (Array.isArray(list)) {
+                        const mapped: TransformerGridItem[] = list.map((item: any) => ({
+                            id: item.masterCode || `TR-${item.masterId}`,
+                            name: item.masterName || `Transformer ${item.masterId}`,
+                            circle: item.circleName || item.CircleName || 'N/A',
+                            division: item.divisionName || item.DivisionName || 'N/A',
+                            lat: item.latitude || item.Latitude || 12.9716,
+                            lng: item.longitude || item.Longitude || 77.5946,
+                            capacity: item.capacity || '100 KVA',
+                            status: item.isOnline ? 'active' : 'inactive',
+                            lastPing: item.installedOn || new Date().toISOString(),
+                            address: item.address || 'Unknown Location',
+                            nearestCustomers: []
+                        }));
+                        setTransformers(mapped);
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to load map data", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
 
     useEffect(() => {
         if (isPaused) return;
         const interval = setInterval(() => {
             setTimeLeft((prev) => {
-                if (prev <= 1) return 60;
+                if (prev <= 1) return 60; // Could trigger refresh
                 return prev - 1;
             });
         }, 1000);
         return () => clearInterval(interval);
     }, [isPaused]);
 
-    const filteredData = MOCK_DATA.filter(item =>
+    const filteredData = transformers.filter(item =>
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.id.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const activeCount = MOCK_DATA.filter(i => i.status === 'active').length;
-    const inactiveCount = MOCK_DATA.filter(i => i.status === 'inactive').length;
-    const totalCount = MOCK_DATA.length;
-    const alertCount = MOCK_DATA.filter(i => i.status === 'alert').length;
-
-    const [maximizedPanel, setMaximizedPanel] = useState<'none' | 'grid' | 'map'>('none');
+    const activeCount = transformers.filter(i => i.status === 'active').length;
+    const inactiveCount = transformers.filter(i => i.status === 'inactive').length;
+    const totalCount = transformers.length;
+    const alertCount = transformers.filter(i => i.status === 'alert').length;
 
     const toggleMaximize = (panel: 'grid' | 'map') => {
         if (maximizedPanel === panel) {
@@ -111,7 +133,7 @@ export default function LCManagementPage() {
 
     return (
         <div className="space-y-6 h-full flex flex-col">
-            {/* Top KPI Cards - Added as per requirement */}
+            {/* Top KPI Cards */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 animate-fade-in">
                 <div className="p-4 rounded-xl bg-white border border-[hsl(var(--border))] shadow-sm flex flex-col items-center justify-center text-center">
                     <p className="text-xs font-semibold text-[hsl(var(--muted-foreground))] uppercase tracking-wider mb-1">Transformers</p>
@@ -138,9 +160,7 @@ export default function LCManagementPage() {
 
             {/* Header & Filters */}
             <div className="flex flex-col gap-4">
-                {/* Top Filters Bar */}
                 <div className="p-4 bg-[hsl(var(--surface))] rounded-lg border border-[hsl(var(--border))] flex flex-wrap gap-4 items-end shadow-sm animate-fade-in">
-
                     <div className="space-y-1">
                         <label className="text-xs font-semibold text-[hsl(var(--muted-foreground))] uppercase">Circle</label>
                         <select className="w-48 h-10 px-3 rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--background))] text-sm focus:ring-2 focus:ring-[hsl(var(--primary)/0.2)]">
@@ -170,10 +190,8 @@ export default function LCManagementPage() {
                     </Button>
 
                     <div className="ml-auto flex items-center gap-4 bg-white p-2 rounded-lg border border-[hsl(var(--border))] shadow-sm">
-                        {/* Auto-Refresh Timer */}
                         <div className="flex items-center gap-3">
                             <div className="relative w-10 h-10 flex items-center justify-center">
-                                {/* Background Circle */}
                                 <svg className="transform -rotate-90 w-10 h-10">
                                     <circle cx="20" cy="20" r="18" stroke="currentColor" strokeWidth="3" fill="transparent" className="text-gray-200" />
                                     <circle
@@ -245,7 +263,7 @@ export default function LCManagementPage() {
                                         className="p-1 hover:bg-gray-200 rounded text-gray-500"
                                         title={maximizedPanel === 'grid' ? "Minimize" : "Maximize"}
                                     >
-                                        {maximizedPanel === 'grid' ? <Filter size={16} className="rotate-45" /> : <Filter size={16} className="-rotate-45" />} {/* Using icon as placeholder for resize */}
+                                        {maximizedPanel === 'grid' ? <Filter size={16} className="rotate-45" /> : <Filter size={16} className="-rotate-45" />}
                                     </button>
                                 </div>
                             </div>
@@ -259,30 +277,63 @@ export default function LCManagementPage() {
                         </div>
 
                         <div className="flex-1 overflow-y-auto p-4 content-start">
-                            {/* Updated Grid Styling: Larger, clean squares */}
-                            <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3">
-                                {filteredData.map((item) => (
-                                    <div
-                                        key={item.id}
-                                        title={`${item.id} - ${item.status}`}
-                                        onClick={() => router.push(`/dashboard/lc-management/${item.id}`)}
-                                        className={clsx(
-                                            "aspect-square rounded-lg flex flex-col items-center justify-center text-xs font-bold text-white shadow-sm cursor-pointer hover:scale-105 transition-transform border-b-4 border-black/10",
-                                            item.status === 'active' && "bg-[#22c55e]",
-                                            item.status === 'inactive' && "bg-[#94a3b8]",
-                                            item.status === 'alert' && "bg-[#ef4444] animate-pulse"
-                                        )}
-                                    >
-                                        <span className="text-white/80 text-[10px] uppercase font-normal mb-0.5">ID</span>
-                                        {item.id.replace('TR-', '')}
-                                    </div>
-                                ))}
-                                {filteredData.length === 0 && (
-                                    <p className="col-span-full text-center text-sm text-[hsl(var(--muted-foreground))] py-8">
-                                        No transformers match your search.
-                                    </p>
-                                )}
-                            </div>
+                            {isLoading ? (
+                                <div className="text-center py-8 text-gray-500">Loading data...</div>
+                            ) : (
+                                <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-4">
+                                    {filteredData.map((item) => (
+                                        <div
+                                            key={item.id}
+                                            title={`${item.name} - ${item.status}\nLat: ${item.lat}, Lng: ${item.lng}`}
+                                            onClick={() => router.push(`/dashboard/lc-management/${item.id}`)}
+                                            className={clsx(
+                                                "aspect-square rounded-xl relative overflow-hidden shadow-sm cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-md border group",
+                                                item.status === 'active' && "bg-gradient-to-br from-white to-emerald-50 border-emerald-200",
+                                                item.status === 'inactive' && "bg-gradient-to-br from-white to-slate-50 border-slate-200",
+                                                item.status === 'alert' && "bg-gradient-to-br from-white to-red-50 border-red-200"
+                                            )}
+                                        >
+                                            {/* Background Icon Watermark - Adjusted opacity */}
+                                            <div className={clsx(
+                                                "absolute -right-4 -bottom-4 opacity-[0.07] transform -rotate-12 transition-transform duration-500 group-hover:scale-110",
+                                                item.status === 'active' && "text-emerald-900",
+                                                item.status === 'inactive' && "text-slate-900",
+                                                item.status === 'alert' && "text-red-900"
+                                            )}>
+                                                <Zap size={80} strokeWidth={2} />
+                                            </div>
+
+                                            {/* Content - Center Icon Removed */}
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center p-2 text-center z-10">
+                                                <p className="text-[9px] uppercase font-bold tracking-widest opacity-50 mb-1">
+                                                    ID
+                                                </p>
+                                                <h4 className={clsx(
+                                                    "text-xs sm:text-sm font-bold leading-tight break-words w-full px-1 line-clamp-3",
+                                                    item.status === 'active' && "text-emerald-800",
+                                                    item.status === 'inactive' && "text-slate-700",
+                                                    item.status === 'alert' && "text-red-800"
+                                                )}>
+                                                    {item.name || item.id}
+                                                </h4>
+                                            </div>
+
+                                            {/* Status Indicator Dot */}
+                                            <div className={clsx(
+                                                "absolute top-2 right-2 w-2 h-2 rounded-full ring-2 ring-white",
+                                                item.status === 'active' && "bg-emerald-500 shadow-sm",
+                                                item.status === 'inactive' && "bg-slate-400",
+                                                item.status === 'alert' && "bg-red-500 animate-pulse"
+                                            )} />
+                                        </div>
+                                    ))}
+                                    {filteredData.length === 0 && (
+                                        <p className="col-span-full text-center text-sm text-[hsl(var(--muted-foreground))] py-8">
+                                            No transformers match your search.
+                                        </p>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}
@@ -296,7 +347,7 @@ export default function LCManagementPage() {
                         <MapView
                             center={[12.9716, 77.5946]}
                             zoom={12}
-                            markers={MOCK_DATA.map(m => ({
+                            markers={transformers.map(m => ({
                                 id: m.id,
                                 lat: m.lat,
                                 lng: m.lng,
@@ -309,7 +360,6 @@ export default function LCManagementPage() {
                         />
 
                         <div className="absolute top-4 right-4 flex flex-col gap-2 z-[400] items-end pointer-events-none">
-                            {/* Controls Overlay - Pass pointer events to buttons */}
                             <button
                                 onClick={() => toggleMaximize('map')}
                                 className="bg-white p-2 text-gray-600 shadow-sm rounded-md hover:bg-gray-50 pointer-events-auto"
@@ -329,9 +379,10 @@ export default function LCManagementPage() {
                     <h3 className="font-bold text-lg">Alert Status</h3>
                 </div>
                 <DataTable
-                    columns={columns.filter(c => c.id !== 'actions')} // Simplified columns for alert table
-                    data={MOCK_DATA.filter(d => d.status === 'alert')}
+                    columns={columns.filter(c => c.id !== 'actions')}
+                    data={transformers.filter(d => d.status === 'alert')}
                     searchKey="name"
+                    isLoading={isLoading}
                 />
             </div>
         </div>

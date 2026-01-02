@@ -115,8 +115,10 @@ export function DataTable<TData, TValue>({
                                                 key={header.id}
                                                 className={clsx(
                                                     "px-6 py-3 font-medium border-b border-[hsl(var(--border))]",
-                                                    isFiltered && "bg-yellow-100 text-yellow-900 border-yellow-200"
+                                                    isFiltered && "bg-yellow-100 text-yellow-900 border-yellow-200",
+                                                    (header.column.columnDef.meta as any)?.className
                                                 )}
+                                                style={(header.column.columnDef.meta as any)?.style}
                                             >
                                                 <div className="flex flex-col gap-2 relative">
                                                     <div className="flex items-center justify-between gap-2">
@@ -187,7 +189,14 @@ export function DataTable<TData, TValue>({
                                         className="bg-[hsl(var(--surface))] hover:bg-[hsl(var(--primary)/0.02)] transition-colors"
                                     >
                                         {row.getVisibleCells().map((cell) => (
-                                            <td key={cell.id} className="px-6 py-4 whitespace-nowrap text-[hsl(var(--foreground))]">
+                                            <td
+                                                key={cell.id}
+                                                className={clsx(
+                                                    "px-6 py-4 whitespace-nowrap text-[hsl(var(--foreground))]",
+                                                    (cell.column.columnDef.meta as any)?.className
+                                                )}
+                                                style={(cell.column.columnDef.meta as any)?.style}
+                                            >
                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                             </td>
                                         ))}

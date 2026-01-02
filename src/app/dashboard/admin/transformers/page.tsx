@@ -121,13 +121,14 @@ export default function TransformerMasterPage() {
                     const mapped: TransformerMaster[] = list.map((item: any) => ({
                         id: item.masterCode || `TR-${item.masterId}`,
                         name: item.masterName || `Transformer ${item.masterId}`,
-                        capacity: '100 KVA',
-                        circle: 'N/A',
-                        division: 'N/A',
-                        subDivision: 'N/A',
-                        lat: 0,
-                        lng: 0,
-                        installDate: item.installedOn || new Date().toISOString(),
+                        capacity: item.capacity || item.Capacity || '100 KVA',
+                        circle: item.circleName || item.CircleName || item.circle || 'N/A',
+                        division: item.divisionName || item.DivisionName || item.division || 'N/A',
+                        subDivision: item.subDivision || item.SubDivision || 'N/A',
+                        lat: item.latitude || item.Latitude || 0,
+                        lng: item.longitude || item.Longitude || 0,
+                        simNumber: item.simNumber || item.SimNumber,
+                        installDate: item.installedOn || item.InstalledOn || new Date().toISOString(),
                         status: item.isOnline ? 'active' : 'inactive'
                     }));
                     setTransformers(mapped);

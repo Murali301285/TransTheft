@@ -24,6 +24,14 @@ export interface MasterDTO {
     masterCode: string;
     isOnline: boolean;
     installedOn?: string;
+    // Extended Details
+    latitude?: number;
+    longitude?: number;
+    address?: string;
+    circleName?: string;
+    divisionName?: string;
+    simNumber?: string;
+    capacity?: string;
 }
 
 // --- Token Management ---
@@ -102,6 +110,9 @@ export const ApiService = {
         logout: async () => {
             TokenService.removeToken();
             // Call API logout if needed: /api/Auth/logOut
+        },
+        register: async (data: any) => {
+            return ApiService.post('/api/User/create-user', data);
         }
     },
 
@@ -121,12 +132,75 @@ export const ApiService = {
     users: {
         getAll: async () => {
             return ApiService.get<any[]>('/api/User/get-users');
+        },
+        // Mocking Pending vs Active if API doesn't support filter directly, or assume new endpoint
+        getPending: async () => {
+            // If get-users returns all, filtering will happen on frontend, 
+            // but let's assume specific endpoint for efficiency or use get-users
+            return ApiService.get<any[]>('/api/User/get-pending-users');
+        },
+        approve: async (id: number) => {
+            return ApiService.post(`/api/User/approve-user/${id}`, {});
+        },
+        reject: async (id: number) => {
+            return ApiService.post(`/api/User/reject-user/${id}`, {});
         }
     },
 
     hierarchy: {
         circles: async () => ApiService.get<any[]>('/api/Circle'),
         divisions: async () => ApiService.get<any[]>('/api/Division'),
+    },
+
+    company: {
+        getAll: async () => {
+            console.log('Fetching companies from /api/Company/get-company');
+            // Trying singular form based on pattern variations
+            return ApiService.get<any[]>('/api/Company/get-company');
+        },
+        create: async (data: any) => {
+            return ApiService.post('/api/Company/create-company', data);
+        },
+        update: async (data: any) => {
+            return ApiService.post('/api/Company/update-company', data);
+        },
+        delete: async (id: number) => {
+            // Try standard pattern delete-company or similar if generic fails
+            return ApiService.post(`/api/Company/delete-company/${id}`, {});
+        }
+    },
+
+    locations: {
+        circle: {
+            getAll: () => ApiService.get<any[]>('/api/Circle/get-circles'),
+            create: (data: any) => ApiService.post('/api/Circle/create-circle', data),
+            update: (data: any) => ApiService.post('/api/Circle/update-circle', data),
+            delete: (id: number) => ApiService.post(`/api/Circle/delete-circle/${id}`, {})
+        },
+        division: {
+            getAll: () => ApiService.get<any[]>('/api/Division/get-divisions'),
+            create: (data: any) => ApiService.post('/api/Division/create-division', data),
+            update: (data: any) => ApiService.post('/api/Division/update-division', data),
+            delete: (id: number) => ApiService.post(`/api/Division/delete-division/${id}`, {})
+        },
+        subDivision: {
+            getAll: () => ApiService.get<any[]>('/api/SubDivision/get-subdivisions'),
+            create: (data: any) => ApiService.post('/api/SubDivision/create-subdivision', data),
+            update: (data: any) => ApiService.post('/api/SubDivision/update-subdivision', data),
+            delete: (id: number) => ApiService.post(`/api/SubDivision/delete-subdivision/${id}`, {})
+        },
+        section: {
+            getAll: () => ApiService.get<any[]>('/api/Section/get-sections'),
+            create: (data: any) => ApiService.post('/api/Section/create-section', data),
+            update: (data: any) => ApiService.post('/api/Section/update-section', data),
+            delete: (id: number) => ApiService.post(`/api/Section/delete-section/${id}`, {})
+        },
+        substation: { // Assuming SubStation or Substation
+            getAll: () => ApiService.get<any[]>('/api/SubStation/get-substations'),
+            create: (data: any) => ApiService.post('/api/SubStation/create-substation', data),
+            update: (data: any) => ApiService.post('/api/SubStation/update-substation', data),
+            delete: (id: number) => ApiService.post(`/api/SubStation/delete-substation/${id}`, {})
+        }
     },
 
     // --- Core Methods ---

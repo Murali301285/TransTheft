@@ -2,10 +2,34 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Users, Zap, Smartphone, MapPin, ShieldCheck, FileText, Database, GitBranch, ArrowRight } from 'lucide-react';
+import { Users, Zap, Smartphone, MapPin, ShieldCheck, FileText, Database, GitBranch, ArrowRight, Building2, ServerCog, Languages } from 'lucide-react';
 import { clsx } from 'clsx';
 
 const ADMIN_MODULES = [
+    {
+        title: 'API Configuration',
+        description: 'Test & Configure API Endpoints.',
+        icon: ServerCog,
+        href: '/dashboard/admin/api-config',
+        color: 'from-indigo-600 to-blue-500',
+        shadow: 'shadow-indigo-500/20'
+    },
+    {
+        title: 'Language Settings',
+        description: 'Manage translations and text.',
+        icon: Languages,
+        href: '/dashboard/admin/language',
+        color: 'from-pink-600 to-rose-500',
+        shadow: 'shadow-pink-500/20'
+    },
+    {
+        title: 'Company Master',
+        description: 'Manage authorized utility companies.',
+        icon: Building2,
+        href: '/dashboard/admin/company',
+        color: 'from-amber-500 to-yellow-400',
+        shadow: 'shadow-amber-500/20'
+    },
     {
         title: 'User Management',
         description: 'Manage users, roles, and permissions.',
