@@ -1,6 +1,6 @@
 import { ApiResponse } from '@/lib/types'; // Assuming types should be centralized or redefined here
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://148.66.153.35:8094';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://148.66.153.35:9092';
 
 // --- DTOs based on Swagger ---
 export interface LoginDTO {
@@ -109,23 +109,142 @@ export const ApiService = {
         },
         logout: async () => {
             TokenService.removeToken();
-            // Call API logout if needed: /api/Auth/logOut
+            return ApiService.post('/api/Auth/logOut', {});
+        },
+        refreshToken: async (data: any) => {
+            return ApiService.post('/api/Auth/refresh-token', data);
+        },
+        revokeToken: async (data: any) => {
+            return ApiService.post('/api/Auth/revoke-token', data);
         },
         register: async (data: any) => {
             return ApiService.post('/api/User/create-user', data);
         }
     },
 
-    transformers: {
+    dashboard: {
+        getTransactionsByCompany: async () => {
+            return ApiService.get<any>('/api/Dashboard/ht-transactions-by-company');
+        },
+        getTransactionsByUser: async () => {
+            return ApiService.get<any>('/api/Dashboard/ht-transactions-by-user');
+        },
+        searchTransactions: async (params: { regionId?: number; circleId?: number; divisionId?: number; subDivisionId?: number }) => {
+            const query = new URLSearchParams(params as any).toString();
+            return ApiService.get<any>(`/api/Dashboard/ht-transactions/search?${query}`);
+        }
+    },
+
+    transformers: { // Switched to Transformer Controller
         getAll: async () => {
-            return ApiService.get<MasterDTO[]>('/api/MasterDevice/get-master-devices');
+            return ApiService.get<any[]>('/api/Transformer/get-transformers');
         },
         getById: async (id: number) => {
-            return ApiService.get<MasterDTO>(`/api/MasterDevice/${id}`);
+            return ApiService.get<any>(`/api/Transformer/get-transformer-by-id?transformerId=${id}`);
         },
-        updateStatus: async (masterCode: string, isOnline: boolean) => {
-            // Placeholder: Adjust endpoint according to Swagger
-            return ApiService.post(`/api/MasterDevice/update-status`, { masterCode, isOnline });
+        getBySubDivision: async (subDivId: number) => {
+            return ApiService.get<any[]>(`/api/Transformer/get-transformers-by-subdivision/${subDivId}`);
+        },
+        getCombo: async () => {
+            // Assuming combo is also on Transformer or keeping specific MasterDevice combo?
+            // Safest to try generic combo or keep existing if unsure.
+            return ApiService.get<any[]>('/api/Transformer/get-transformers-combo');
+        },
+        // getComboBySubDivision ... might not exist or diff path
+        create: async (data: any) => {
+            return ApiService.post('/api/Transformer/add-transformer', data);
+        },
+        update: async (data: any) => {
+            return ApiService.put('/api/Transformer/update-transformer', data);
+        },
+        delete: async (id: number) => {
+            return ApiService.put(`/api/Transformer/delete-transformer?transformerId=${id}`, {});
+        },
+        getDashboardTransactions: async (fromDate?: string, toDate?: string) => {
+            let url = '/api/Dashboard/transformer-transactions-by-company';
+            if (fromDate && toDate) {
+                url += `?fromDate=${fromDate}&toDate=${toDate}`;
+            }
+            return ApiService.get<any[]>(url);
+        },
+        getTransactionsByUser: async (fromDate?: string, toDate?: string) => {
+            let url = '/api/Dashboard/transformer-transactions-by-user';
+            if (fromDate && toDate) {
+                url += `?fromDate=${fromDate}&toDate=${toDate}`;
+            }
+            return ApiService.get<any[]>(url);
+        }
+    },
+
+    alerts: {
+        getOpen: async (fromDate: string, toDate: string) => {
+            try {
+                const res = await fetch(`/api/proxy/alerts?type=open&fromDate=${fromDate}&toDate=${toDate}`, {
+                    method: 'GET',
+                    headers: getHeaders()
+                });
+                return handleResponse<any[]>(res);
+            } catch (error) {
+                return { success: false, message: 'Network Error' };
+            }
+        },
+        getClosed: async (fromDate: string, toDate: string) => {
+            try {
+                const res = await fetch(`/api/proxy/alerts?type=closed&fromDate=${fromDate}&toDate=${toDate}`, {
+                    method: 'GET',
+                    headers: getHeaders()
+                });
+                return handleResponse<any[]>(res);
+            } catch (error) {
+                return { success: false, message: 'Network Error' };
+            }
+        },
+        getAll: async (fromDate: string, toDate: string) => {
+            try {
+                const res = await fetch(`/api/proxy/alerts?type=closed&fromDate=${fromDate}&toDate=${toDate}`, {
+                    method: 'GET',
+                    headers: getHeaders()
+                });
+                return handleResponse<any[]>(res);
+            } catch (error) {
+                return { success: false, message: 'Network Error' };
+            }
+        }
+    },
+
+    transformerAssets: {
+        create: async (data: any) => {
+            return ApiService.post('/api/Transformer/create', data);
+        },
+        import: async (data: any[]) => {
+            return ApiService.post('/api/Transformer/import', data);
+        }
+    },
+
+    sims: {
+        getAll: async () => {
+            return ApiService.get<any[]>('/api/Sim/get-sims');
+        },
+        getById: async (id: number) => {
+            return ApiService.get<any>(`/api/Sim/${id}`);
+        },
+        create: async (data: any) => {
+            return ApiService.post('/api/Sim/add-sim', data);
+        },
+        update: async (data: any) => {
+            return ApiService.put('/api/Sim/update-sim', data);
+        },
+        delete: async (id: number) => {
+            return ApiService.put(`/api/Sim/delete-sim?simId=${id}`, {});
+        }
+    },
+
+    masterDevices: {
+        getAll: async () => {
+            return ApiService.get<any[]>('/api/MasterDevice/get-master-devices');
+        },
+        getCombo: async () => {
+            return ApiService.get<any[]>('/api/MasterDevice/get-masters-combo');
         }
     },
 
@@ -133,73 +252,106 @@ export const ApiService = {
         getAll: async () => {
             return ApiService.get<any[]>('/api/User/get-users');
         },
-        // Mocking Pending vs Active if API doesn't support filter directly, or assume new endpoint
-        getPending: async () => {
-            // If get-users returns all, filtering will happen on frontend, 
-            // but let's assume specific endpoint for efficiency or use get-users
-            return ApiService.get<any[]>('/api/User/get-pending-users');
+        getById: async (id: number) => {
+            return ApiService.get<any>(`/api/User/get-user-byId?id=${id}`);
         },
-        approve: async (id: number) => {
-            return ApiService.post(`/api/User/approve-user/${id}`, {});
+        getRolesCombo: async () => {
+            return ApiService.get<any[]>('/api/User/get-roles-combo');
         },
-        reject: async (id: number) => {
-            return ApiService.post(`/api/User/reject-user/${id}`, {});
+        create: async (data: any) => {
+            return ApiService.post('/api/User/create-user', data);
+        },
+        update: async (data: any, userId: number) => {
+            return ApiService.put(`/api/User/update-user?userId=${userId}`, data);
+        },
+        delete: async (id: number) => {
+            return ApiService.put(`/api/User/delete-user?userId=${id}`, {});
         }
-    },
-
-    hierarchy: {
-        circles: async () => ApiService.get<any[]>('/api/Circle'),
-        divisions: async () => ApiService.get<any[]>('/api/Division'),
     },
 
     company: {
         getAll: async () => {
-            console.log('Fetching companies from /api/Company/get-company');
-            // Trying singular form based on pattern variations
             return ApiService.get<any[]>('/api/Company/get-company');
         },
+        getCombo: async () => {
+            return ApiService.get<any[]>('/api/Company/get-company-combo');
+        },
+        getById: async (id: number) => {
+            return ApiService.get<any>(`/api/Company/${id}`);
+        },
         create: async (data: any) => {
-            return ApiService.post('/api/Company/create-company', data);
+            return ApiService.post('/api/Company/add-company', data);
         },
         update: async (data: any) => {
-            return ApiService.post('/api/Company/update-company', data);
+            return ApiService.put('/api/Company/update-company', data);
         },
         delete: async (id: number) => {
-            // Try standard pattern delete-company or similar if generic fails
-            return ApiService.post(`/api/Company/delete-company/${id}`, {});
+            return ApiService.put(`/api/Company/delete-company?companyId=${id}`, {});
         }
     },
 
+    customer: {
+        getAll: () => ApiService.get<any[]>('/api/Customer'),
+        getCombo: () => ApiService.get<any[]>('/api/Customer/combo'),
+        getById: (id: number) => ApiService.get<any>(`/api/Customer/${id}`),
+        create: (data: any) => ApiService.post('/api/Customer/create', data),
+        update: (id: number, data: any) => ApiService.put(`/api/Customer/${id}`, data),
+        delete: (id: number) => ApiService.delete(`/api/Customer/${id}`)
+    },
+
     locations: {
+        region: {
+            getAll: () => ApiService.get<any[]>('/api/Region'),
+            getCombo: () => ApiService.get<any[]>('/api/Region/combo'),
+            getById: (id: number) => ApiService.get<any>(`/api/Region/${id}`),
+            create: (data: any) => ApiService.post('/api/Region/create', data),
+            update: (id: number, data: any) => ApiService.put(`/api/Region/${id}`, data),
+            delete: (id: number) => ApiService.delete(`/api/Region/${id}`)
+        },
         circle: {
-            getAll: () => ApiService.get<any[]>('/api/Circle/get-circles'),
-            create: (data: any) => ApiService.post('/api/Circle/create-circle', data),
-            update: (data: any) => ApiService.post('/api/Circle/update-circle', data),
-            delete: (id: number) => ApiService.post(`/api/Circle/delete-circle/${id}`, {})
+            getAll: () => ApiService.get<any[]>('/api/Circle'),
+            getCombo: () => ApiService.get<any[]>('/api/Circle/combo'),
+            getComboByRegion: (regionId: number) => ApiService.get<any[]>(`/api/Circle/combo/${regionId}`),
+            getById: (id: number) => ApiService.get<any>(`/api/Circle/${id}`),
+            create: (data: any) => ApiService.post('/api/Circle/create', data),
+            update: (id: number, data: any) => ApiService.put(`/api/Circle/${id}`, data),
+            delete: (id: number) => ApiService.delete(`/api/Circle/${id}`)
         },
         division: {
-            getAll: () => ApiService.get<any[]>('/api/Division/get-divisions'),
-            create: (data: any) => ApiService.post('/api/Division/create-division', data),
-            update: (data: any) => ApiService.post('/api/Division/update-division', data),
-            delete: (id: number) => ApiService.post(`/api/Division/delete-division/${id}`, {})
+            getAll: () => ApiService.get<any[]>('/api/Division'),
+            getCombo: () => ApiService.get<any[]>('/api/Division/combo'),
+            getComboByCircle: (circleId: number) => ApiService.get<any[]>(`/api/Division/combo/${circleId}`),
+            getById: (id: number) => ApiService.get<any>(`/api/Division/${id}`),
+            create: (data: any) => ApiService.post('/api/Division/create', data),
+            update: (id: number, data: any) => ApiService.put(`/api/Division/${id}`, data),
+            delete: (id: number) => ApiService.delete(`/api/Division/${id}`)
         },
         subDivision: {
-            getAll: () => ApiService.get<any[]>('/api/SubDivision/get-subdivisions'),
-            create: (data: any) => ApiService.post('/api/SubDivision/create-subdivision', data),
-            update: (data: any) => ApiService.post('/api/SubDivision/update-subdivision', data),
-            delete: (id: number) => ApiService.post(`/api/SubDivision/delete-subdivision/${id}`, {})
+            getAll: () => ApiService.get<any[]>('/api/SubDivision'),
+            getCombo: () => ApiService.get<any[]>('/api/SubDivision/combo'),
+            getComboByDivision: (divisionId: number) => ApiService.get<any[]>(`/api/SubDivision/combo/${divisionId}`),
+            getById: (id: number) => ApiService.get<any>(`/api/SubDivision/${id}`),
+            create: (data: any) => ApiService.post('/api/SubDivision/create', data),
+            update: (id: number, data: any) => ApiService.put(`/api/SubDivision/${id}`, data),
+            delete: (id: number) => ApiService.delete(`/api/SubDivision/${id}`)
         },
-        section: {
-            getAll: () => ApiService.get<any[]>('/api/Section/get-sections'),
-            create: (data: any) => ApiService.post('/api/Section/create-section', data),
-            update: (data: any) => ApiService.post('/api/Section/update-section', data),
-            delete: (id: number) => ApiService.post(`/api/Section/delete-section/${id}`, {})
+        substation: {
+            getAll: () => ApiService.get<any[]>('/api/Substation/get-substations'),
+            getBySubDivision: (id: number) => ApiService.get<any[]>(`/api/Substation/get-substations-by-subdivision/${id}`),
+            getCombo: () => ApiService.get<any[]>('/api/Substation/get-substations-combo'),
+            getComboBySubDivision: (id: number) => ApiService.get<any[]>(`/api/Substation/get-substations-combo-by-subdivision/${id}`),
+            getById: (id: number) => ApiService.get<any>(`/api/Substation/${id}`),
+            create: (data: any) => ApiService.post('/api/Substation/add-substation', data),
+            update: (data: any) => ApiService.put('/api/Substation/update-substation', data),
+            delete: (id: number) => ApiService.put(`/api/Substation/delete-substation?substationId=${id}`, {})
         },
-        substation: { // Assuming SubStation or Substation
-            getAll: () => ApiService.get<any[]>('/api/SubStation/get-substations'),
-            create: (data: any) => ApiService.post('/api/SubStation/create-substation', data),
-            update: (data: any) => ApiService.post('/api/SubStation/update-substation', data),
-            delete: (id: number) => ApiService.post(`/api/SubStation/delete-substation/${id}`, {})
+        feeder: {
+            getAll: () => ApiService.get<any[]>('/api/Feeder'),
+            getCombo: () => ApiService.get<any[]>('/api/Feeder/combo'),
+            getById: (id: number) => ApiService.get<any>(`/api/Feeder/${id}`),
+            create: (data: any) => ApiService.post('/api/Feeder/create', data),
+            update: (id: number, data: any) => ApiService.put(`/api/Feeder/${id}`, data),
+            delete: (id: number) => ApiService.delete(`/api/Feeder/${id}`)
         }
     },
 
@@ -222,6 +374,31 @@ export const ApiService = {
                 method: 'POST',
                 headers: getHeaders(),
                 body: JSON.stringify(body)
+            });
+            return handleResponse<T>(res);
+        } catch (error) {
+            return { success: false, message: 'Network Error' };
+        }
+    },
+
+    put: async <T>(endpoint: string, body: any): Promise<ApiResponse<T>> => {
+        try {
+            const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+                method: 'PUT',
+                headers: getHeaders(),
+                body: JSON.stringify(body)
+            });
+            return handleResponse<T>(res);
+        } catch (error) {
+            return { success: false, message: 'Network Error' };
+        }
+    },
+
+    delete: async <T>(endpoint: string): Promise<ApiResponse<T>> => {
+        try {
+            const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+                method: 'DELETE',
+                headers: getHeaders()
             });
             return handleResponse<T>(res);
         } catch (error) {

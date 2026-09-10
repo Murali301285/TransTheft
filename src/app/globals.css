@@ -53,8 +53,7 @@
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
+.dark {
     --background: 222 47% 11%;
     /* Slate 900 */
     --surface: 217 33% 17%;
@@ -64,7 +63,12 @@
     --foreground: 210 40% 98%;
     --muted-foreground: 215 20% 65%;
     --border: 217 33% 17%;
-  }
+}
+
+.dark body {
+    background: linear-gradient(to bottom right, #0f172a, #1e3a8a, #0f172a);
+    /* from-slate-900 via-blue-900 to-slate-900 */
+    background-attachment: fixed;
 }
 
 * {
@@ -81,6 +85,52 @@ body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
   -webkit-font-smoothing: antialiased;
+
+  /* Hide main scrollbar */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Custom Table Scrollbar - hidden unless hovered or active scrolling */
+.table-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.3s ease;
+}
+
+.table-scrollbar.is-scrolling,
+.table-scrollbar:hover {
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+
+.table-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.table-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.table-scrollbar::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 9999px;
+  transition: background-color 0.3s ease;
+}
+
+.table-scrollbar.is-scrolling::-webkit-scrollbar-thumb,
+.table-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.4);
+}
+
+.table-scrollbar.is-scrolling::-webkit-scrollbar-thumb:hover,
+.table-scrollbar:hover::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.6);
 }
 
 /* Utilities */
@@ -126,4 +176,30 @@ body {
 
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Ensure Leaflet tooltips and popups are styled on top of other layout blocks */
+.leaflet-tooltip-pane {
+  z-index: 6500 !important;
+}
+
+.leaflet-popup-pane {
+  z-index: 7000 !important;
+}
+
+.leaflet-tooltip {
+  z-index: 6500 !important;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  background-color: white !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 0 !important; /* Let the inner container control padding */
+}
+
+/* Fix Leaflet style issues */
+.leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  border-radius: inherit;
 }

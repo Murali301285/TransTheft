@@ -12,9 +12,11 @@ import {
 import { useRouter } from 'next/navigation';
 import { clsx } from 'clsx';
 import { toast } from 'sonner';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function ApiConfigPage() {
     const router = useRouter();
+    const { t } = useLanguage();
     const [apis, setApis] = useState<ApiEndpoint[]>([]);
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
@@ -157,21 +159,21 @@ export default function ApiConfigPage() {
             {/* Negative margin to fill container if parent has padding, else adjust */}
 
             {/* Header */}
-            <div className="bg-white border-b px-6 py-3 flex justify-between items-center shrink-0">
+            <div className="bg-white border-b px-6 pb-3 pt-5 flex justify-between items-center shrink-0">
                 <div className="flex items-center gap-4">
                     <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/admin')}>
                         <ArrowLeft size={18} />
                     </Button>
                     <div>
                         <h1 className="text-xl font-bold flex items-center gap-2">
-                            <ServerCog className="text-blue-600" /> API Configuration
+                            <ServerCog className="text-blue-600" /> {t('admin.api_config')}
                         </h1>
-                        <p className="text-xs text-muted-foreground">Manage and test backend endpoints</p>
+                        <p className="text-xs text-muted-foreground">{t('desc.api_config')}</p>
                     </div>
                 </div>
                 <div className="flex gap-2">
                     <Button size="sm" onClick={handleNew} className="gap-2">
-                        <Plus size={16} /> Add Endpoint
+                        <Plus size={16} /> {t('btn.add_endpoint') || 'Add Endpoint'}
                     </Button>
                 </div>
             </div>

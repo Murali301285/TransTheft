@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { clsx } from 'clsx';
 import { LayoutDashboard, Users, FileBarChart, Settings, ShieldAlert, Activity, GitBranch } from 'lucide-react';
-import { useText } from '@/lib/i18n';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface SidebarProps {
     isOpen: boolean;
@@ -12,18 +12,18 @@ interface SidebarProps {
 }
 
 const MENU_ITEMS = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard/home' },
-    { icon: Activity, label: 'LC Management', path: '/dashboard/lc-management' },
-    { icon: ShieldAlert, label: 'Alerts', path: '/dashboard/alerts' },
-    { icon: FileBarChart, label: 'Reports', path: '/dashboard/reports' },
-    { icon: GitBranch, label: 'Hierarchy', path: '/dashboard/hierarchy' },
-    { icon: Users, label: 'Admin', path: '/dashboard/admin' },
-    { icon: Settings, label: 'Settings', path: '/dashboard/settings' },
+    { icon: LayoutDashboard, label: 'Dashboard', key: 'menu.dashboard', path: '/dashboard/home' },
+    { icon: Activity, label: 'LC Management', key: 'menu.lc_management', path: '/dashboard/lc-management' },
+    { icon: ShieldAlert, label: 'Alerts', key: 'menu.alerts', path: '/dashboard/alerts' },
+    { icon: FileBarChart, label: 'Reports', key: 'menu.reports', path: '/dashboard/reports' },
+    { icon: GitBranch, label: 'Hierarchy', key: 'menu.hierarchy', path: '/dashboard/hierarchy' },
+    { icon: Users, label: 'Admin', key: 'menu.admin', path: '/dashboard/admin' },
+    { icon: Settings, label: 'Settings', key: 'menu.settings', path: '/dashboard/settings' },
 ];
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
     const pathname = usePathname();
-    const { t } = useText();
+    const { t } = useLanguage();
 
     return (
         <>
@@ -63,7 +63,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                                 onClick={() => onClose()} // Close on mobile navigation
                             >
                                 <Icon size={20} />
-                                {item.label} {/* t(item.label.toLowerCase()) in real implementation */}
+                                {t(item.key)}
                             </Link>
                         );
                     })}

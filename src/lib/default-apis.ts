@@ -3,7 +3,7 @@ import { ApiEndpoint } from './api-config-types';
 export const DEFAULT_APIS: ApiEndpoint[] = [
     {
         "id": "1",
-        "name": "Unnamed API",
+        "name": "Auth Login",
         "group": "Auth",
         "method": "POST",
         "url": "/api/Auth/login",
@@ -13,7 +13,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "2",
-        "name": "Unnamed API",
+        "name": "Auth LogOut",
         "group": "Auth",
         "method": "POST",
         "url": "/api/Auth/logOut",
@@ -23,7 +23,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "3",
-        "name": "Unnamed API",
+        "name": "Auth Refresh-token",
         "group": "Auth",
         "method": "POST",
         "url": "/api/Auth/refresh-token",
@@ -33,7 +33,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "4",
-        "name": "Unnamed API",
+        "name": "Auth Revoke-token",
         "group": "Auth",
         "method": "POST",
         "url": "/api/Auth/revoke-token",
@@ -43,7 +43,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "5",
-        "name": "Unnamed API",
+        "name": "Circle",
         "group": "Circle",
         "method": "GET",
         "url": "/api/Circle",
@@ -52,7 +52,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "6",
-        "name": "Unnamed API",
+        "name": "Circle Combo",
         "group": "Circle",
         "method": "GET",
         "url": "/api/Circle/combo",
@@ -61,7 +61,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "7",
-        "name": "Unnamed API",
+        "name": "Circle Combo",
         "group": "Circle",
         "method": "GET",
         "url": "/api/Circle/combo/{regionId}",
@@ -70,7 +70,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "8",
-        "name": "Unnamed API",
+        "name": "Circle",
         "group": "Circle",
         "method": "GET",
         "url": "/api/Circle/{circleId}",
@@ -79,7 +79,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "9",
-        "name": "Unnamed API",
+        "name": "Circle",
         "group": "Circle",
         "method": "PUT",
         "url": "/api/Circle/{circleId}",
@@ -89,7 +89,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "10",
-        "name": "Unnamed API",
+        "name": "Circle",
         "group": "Circle",
         "method": "DELETE",
         "url": "/api/Circle/{circleId}",
@@ -98,7 +98,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "11",
-        "name": "Unnamed API",
+        "name": "Circle Create",
         "group": "Circle",
         "method": "POST",
         "url": "/api/Circle/create",
@@ -108,7 +108,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "12",
-        "name": "Unnamed API",
+        "name": "Circle Import",
         "group": "Circle",
         "method": "POST",
         "url": "/api/Circle/import",
@@ -118,7 +118,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "13",
-        "name": "Unnamed API",
+        "name": "Company Get-company",
         "group": "Company",
         "method": "GET",
         "url": "/api/Company/get-company",
@@ -127,7 +127,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "14",
-        "name": "Unnamed API",
+        "name": "Company Get-company-combo",
         "group": "Company",
         "method": "GET",
         "url": "/api/Company/get-company-combo",
@@ -136,7 +136,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "15",
-        "name": "Unnamed API",
+        "name": "Company",
         "group": "Company",
         "method": "GET",
         "url": "/api/Company/{companyId}",
@@ -145,7 +145,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "16",
-        "name": "Unnamed API",
+        "name": "Company Add-company",
         "group": "Company",
         "method": "POST",
         "url": "/api/Company/add-company",
@@ -155,7 +155,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "17",
-        "name": "Unnamed API",
+        "name": "Company Update-company",
         "group": "Company",
         "method": "PUT",
         "url": "/api/Company/update-company",
@@ -165,7 +165,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "18",
-        "name": "Unnamed API",
+        "name": "Company Delete-company",
         "group": "Company",
         "method": "PUT",
         "url": "/api/Company/delete-company",
@@ -175,7 +175,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "19",
-        "name": "Unnamed API",
+        "name": "Customer",
         "group": "Customer",
         "method": "GET",
         "url": "/api/Customer",
@@ -184,7 +184,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "20",
-        "name": "Unnamed API",
+        "name": "Customer Combo",
         "group": "Customer",
         "method": "GET",
         "url": "/api/Customer/combo",
@@ -193,7 +193,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "21",
-        "name": "Unnamed API",
+        "name": "Customer Combo",
         "group": "Customer",
         "method": "GET",
         "url": "/api/Customer/combo/{substationId}",
@@ -202,7 +202,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "22",
-        "name": "Unnamed API",
+        "name": "Customer",
         "group": "Customer",
         "method": "GET",
         "url": "/api/Customer/{customerId}",
@@ -211,7 +211,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "23",
-        "name": "Unnamed API",
+        "name": "Customer",
         "group": "Customer",
         "method": "PUT",
         "url": "/api/Customer/{customerId}",
@@ -221,7 +221,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "24",
-        "name": "Unnamed API",
+        "name": "Customer",
         "group": "Customer",
         "method": "DELETE",
         "url": "/api/Customer/{customerId}",
@@ -230,7 +230,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "25",
-        "name": "Unnamed API",
+        "name": "Customer Create",
         "group": "Customer",
         "method": "POST",
         "url": "/api/Customer/create",
@@ -240,7 +240,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "26",
-        "name": "Unnamed API",
+        "name": "Customer Import",
         "group": "Customer",
         "method": "POST",
         "url": "/api/Customer/import",
@@ -250,7 +250,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "27",
-        "name": "Unnamed API",
+        "name": "Dashboard Ht-transactions-by-company",
         "group": "Dashboard",
         "method": "GET",
         "url": "/api/Dashboard/ht-transactions-by-company",
@@ -259,7 +259,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "28",
-        "name": "Unnamed API",
+        "name": "Dashboard Ht-transactions Search",
         "group": "Dashboard",
         "method": "GET",
         "url": "/api/Dashboard/ht-transactions/search",
@@ -268,7 +268,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "29",
-        "name": "Unnamed API",
+        "name": "Dashboard Ht-transactions-by-user",
         "group": "Dashboard",
         "method": "GET",
         "url": "/api/Dashboard/ht-transactions-by-user",
@@ -277,7 +277,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "30",
-        "name": "Unnamed API",
+        "name": "Division",
         "group": "Division",
         "method": "GET",
         "url": "/api/Division",
@@ -286,7 +286,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "31",
-        "name": "Unnamed API",
+        "name": "Division Combo",
         "group": "Division",
         "method": "GET",
         "url": "/api/Division/combo",
@@ -295,7 +295,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "32",
-        "name": "Unnamed API",
+        "name": "Division Combo",
         "group": "Division",
         "method": "GET",
         "url": "/api/Division/combo/{circleId}",
@@ -304,7 +304,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "33",
-        "name": "Unnamed API",
+        "name": "Division",
         "group": "Division",
         "method": "GET",
         "url": "/api/Division/{divisionId}",
@@ -313,7 +313,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "34",
-        "name": "Unnamed API",
+        "name": "Division",
         "group": "Division",
         "method": "PUT",
         "url": "/api/Division/{divisionId}",
@@ -323,7 +323,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "35",
-        "name": "Unnamed API",
+        "name": "Division",
         "group": "Division",
         "method": "DELETE",
         "url": "/api/Division/{divisionId}",
@@ -332,7 +332,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "36",
-        "name": "Unnamed API",
+        "name": "Division Create",
         "group": "Division",
         "method": "POST",
         "url": "/api/Division/create",
@@ -342,7 +342,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "37",
-        "name": "Unnamed API",
+        "name": "Division Import",
         "group": "Division",
         "method": "POST",
         "url": "/api/Division/import",
@@ -352,7 +352,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "38",
-        "name": "Unnamed API",
+        "name": "HWMasterCustomerMap Get-map",
         "group": "HWMasterCustomerMap",
         "method": "GET",
         "url": "/api/HWMasterCustomerMap/get-map",
@@ -361,7 +361,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "39",
-        "name": "Unnamed API",
+        "name": "HWMasterCustomerMap Get-map",
         "group": "HWMasterCustomerMap",
         "method": "GET",
         "url": "/api/HWMasterCustomerMap/get-map/{mapId}",
@@ -370,7 +370,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "40",
-        "name": "Unnamed API",
+        "name": "HWMasterCustomerMap Get-map-by-substation",
         "group": "HWMasterCustomerMap",
         "method": "GET",
         "url": "/api/HWMasterCustomerMap/get-map-by-substation/{subStationId}",
@@ -379,7 +379,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "41",
-        "name": "Unnamed API",
+        "name": "HWMasterCustomerMap Create",
         "group": "HWMasterCustomerMap",
         "method": "POST",
         "url": "/api/HWMasterCustomerMap/create",
@@ -389,7 +389,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "42",
-        "name": "Unnamed API",
+        "name": "HWMasterCustomerMap Import",
         "group": "HWMasterCustomerMap",
         "method": "POST",
         "url": "/api/HWMasterCustomerMap/import",
@@ -399,7 +399,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "43",
-        "name": "Unnamed API",
+        "name": "HWMasterCustomerMap Update",
         "group": "HWMasterCustomerMap",
         "method": "PUT",
         "url": "/api/HWMasterCustomerMap/update/{mapId}",
@@ -409,7 +409,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "44",
-        "name": "Unnamed API",
+        "name": "HWMasterCustomerMap Delete",
         "group": "HWMasterCustomerMap",
         "method": "PUT",
         "url": "/api/HWMasterCustomerMap/delete/{mapId}",
@@ -419,7 +419,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "45",
-        "name": "Unnamed API",
+        "name": "MasterDevice Get-master-devices",
         "group": "MasterDevice",
         "method": "GET",
         "url": "/api/MasterDevice/get-master-devices",
@@ -428,7 +428,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "46",
-        "name": "Unnamed API",
+        "name": "MasterDevice Get-masters-combo",
         "group": "MasterDevice",
         "method": "GET",
         "url": "/api/MasterDevice/get-masters-combo",
@@ -437,7 +437,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "47",
-        "name": "Unnamed API",
+        "name": "MasterDevice Get-master-devices-by-subdivision",
         "group": "MasterDevice",
         "method": "GET",
         "url": "/api/MasterDevice/get-master-devices-by-subdivision/{subDivisionId}",
@@ -446,7 +446,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "48",
-        "name": "Unnamed API",
+        "name": "MasterDevice Get-masters-combo-by-subdivision",
         "group": "MasterDevice",
         "method": "GET",
         "url": "/api/MasterDevice/get-masters-combo-by-subdivision/{subDivisionId}",
@@ -455,7 +455,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "49",
-        "name": "Unnamed API",
+        "name": "MasterDevice",
         "group": "MasterDevice",
         "method": "GET",
         "url": "/api/MasterDevice/{masterId}",
@@ -464,7 +464,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "50",
-        "name": "Unnamed API",
+        "name": "MasterDevice Add-master-device",
         "group": "MasterDevice",
         "method": "POST",
         "url": "/api/MasterDevice/add-master-device",
@@ -474,7 +474,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "51",
-        "name": "Unnamed API",
+        "name": "MasterDevice Update-master",
         "group": "MasterDevice",
         "method": "PUT",
         "url": "/api/MasterDevice/update-master",
@@ -484,7 +484,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "52",
-        "name": "Unnamed API",
+        "name": "MasterDevice Delete-master",
         "group": "MasterDevice",
         "method": "PUT",
         "url": "/api/MasterDevice/delete-master/{masterId}",
@@ -494,7 +494,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "53",
-        "name": "Unnamed API",
+        "name": "MasterPage Get-master-pages",
         "group": "MasterPage",
         "method": "GET",
         "url": "/api/MasterPage/get-master-pages",
@@ -503,7 +503,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "54",
-        "name": "Unnamed API",
+        "name": "MasterPage",
         "group": "MasterPage",
         "method": "GET",
         "url": "/api/MasterPage/{masterId}",
@@ -512,7 +512,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "55",
-        "name": "Unnamed API",
+        "name": "MasterPage Add-master-page",
         "group": "MasterPage",
         "method": "POST",
         "url": "/api/MasterPage/add-master-page",
@@ -522,7 +522,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "56",
-        "name": "Unnamed API",
+        "name": "MasterPage Update-master-page",
         "group": "MasterPage",
         "method": "PUT",
         "url": "/api/MasterPage/update-master-page",
@@ -532,7 +532,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "57",
-        "name": "Unnamed API",
+        "name": "MasterPage Delete-master-page",
         "group": "MasterPage",
         "method": "PUT",
         "url": "/api/MasterPage/delete-master-page",
@@ -542,7 +542,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "58",
-        "name": "Unnamed API",
+        "name": "MasterPage Delete-child-page",
         "group": "MasterPage",
         "method": "PUT",
         "url": "/api/MasterPage/delete-child-page",
@@ -552,7 +552,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "59",
-        "name": "Unnamed API",
+        "name": "PagePrivilege Get-page-privileges",
         "group": "PagePrivilege",
         "method": "GET",
         "url": "/api/PagePrivilege/get-page-privileges",
@@ -561,7 +561,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "60",
-        "name": "Unnamed API",
+        "name": "PagePrivilege Get-privilegebyId",
         "group": "PagePrivilege",
         "method": "GET",
         "url": "/api/PagePrivilege/get-privilegebyId/{previlegeId}",
@@ -570,7 +570,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "61",
-        "name": "Unnamed API",
+        "name": "PagePrivilege Get-privilegebyRole",
         "group": "PagePrivilege",
         "method": "GET",
         "url": "/api/PagePrivilege/get-privilegebyRole/{roleId}",
@@ -579,7 +579,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "62",
-        "name": "Unnamed API",
+        "name": "PagePrivilege Get-master-privilegebyRole",
         "group": "PagePrivilege",
         "method": "GET",
         "url": "/api/PagePrivilege/get-master-privilegebyRole/{roleId}",
@@ -588,7 +588,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "63",
-        "name": "Unnamed API",
+        "name": "PagePrivilege Get-child-privilegebyRole",
         "group": "PagePrivilege",
         "method": "GET",
         "url": "/api/PagePrivilege/get-child-privilegebyRole",
@@ -597,7 +597,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "64",
-        "name": "Unnamed API",
+        "name": "PagePrivilege Add-privilege",
         "group": "PagePrivilege",
         "method": "POST",
         "url": "/api/PagePrivilege/add-privilege",
@@ -607,7 +607,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "65",
-        "name": "Unnamed API",
+        "name": "PagePrivilege Add-privilege-list",
         "group": "PagePrivilege",
         "method": "POST",
         "url": "/api/PagePrivilege/add-privilege-list",
@@ -617,7 +617,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "66",
-        "name": "Unnamed API",
+        "name": "PagePrivilege Update-privilege",
         "group": "PagePrivilege",
         "method": "PUT",
         "url": "/api/PagePrivilege/update-privilege",
@@ -627,7 +627,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "67",
-        "name": "Unnamed API",
+        "name": "PagePrivilege Delete-privilege",
         "group": "PagePrivilege",
         "method": "PUT",
         "url": "/api/PagePrivilege/delete-privilege",
@@ -637,7 +637,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "68",
-        "name": "Unnamed API",
+        "name": "Region",
         "group": "Region",
         "method": "GET",
         "url": "/api/Region",
@@ -646,7 +646,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "69",
-        "name": "Unnamed API",
+        "name": "Region Combo",
         "group": "Region",
         "method": "GET",
         "url": "/api/Region/combo",
@@ -655,7 +655,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "70",
-        "name": "Unnamed API",
+        "name": "Region",
         "group": "Region",
         "method": "GET",
         "url": "/api/Region/{regionId}",
@@ -664,7 +664,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "71",
-        "name": "Unnamed API",
+        "name": "Region",
         "group": "Region",
         "method": "PUT",
         "url": "/api/Region/{regionId}",
@@ -674,7 +674,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "72",
-        "name": "Unnamed API",
+        "name": "Region",
         "group": "Region",
         "method": "DELETE",
         "url": "/api/Region/{regionId}",
@@ -683,7 +683,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "73",
-        "name": "Unnamed API",
+        "name": "Region Create",
         "group": "Region",
         "method": "POST",
         "url": "/api/Region/create",
@@ -693,7 +693,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "74",
-        "name": "Unnamed API",
+        "name": "Region Import",
         "group": "Region",
         "method": "POST",
         "url": "/api/Region/import",
@@ -703,7 +703,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "75",
-        "name": "Unnamed API",
+        "name": "SubDivision",
         "group": "SubDivision",
         "method": "GET",
         "url": "/api/SubDivision",
@@ -712,7 +712,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "76",
-        "name": "Unnamed API",
+        "name": "SubDivision Combo",
         "group": "SubDivision",
         "method": "GET",
         "url": "/api/SubDivision/combo",
@@ -721,7 +721,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "77",
-        "name": "Unnamed API",
+        "name": "SubDivision Combo",
         "group": "SubDivision",
         "method": "GET",
         "url": "/api/SubDivision/combo/{divisionId}",
@@ -730,7 +730,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "78",
-        "name": "Unnamed API",
+        "name": "SubDivision",
         "group": "SubDivision",
         "method": "GET",
         "url": "/api/SubDivision/{subDivisionId}",
@@ -739,7 +739,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "79",
-        "name": "Unnamed API",
+        "name": "SubDivision",
         "group": "SubDivision",
         "method": "PUT",
         "url": "/api/SubDivision/{subDivisionId}",
@@ -749,7 +749,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "80",
-        "name": "Unnamed API",
+        "name": "SubDivision",
         "group": "SubDivision",
         "method": "DELETE",
         "url": "/api/SubDivision/{subDivisionId}",
@@ -758,7 +758,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "81",
-        "name": "Unnamed API",
+        "name": "SubDivision Create",
         "group": "SubDivision",
         "method": "POST",
         "url": "/api/SubDivision/create",
@@ -768,7 +768,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "82",
-        "name": "Unnamed API",
+        "name": "SubDivision Import",
         "group": "SubDivision",
         "method": "POST",
         "url": "/api/SubDivision/import",
@@ -778,7 +778,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "83",
-        "name": "Unnamed API",
+        "name": "Substation Get-substations",
         "group": "Substation",
         "method": "GET",
         "url": "/api/Substation/get-substations",
@@ -787,7 +787,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "84",
-        "name": "Unnamed API",
+        "name": "Substation Get-substations-by-subdivision",
         "group": "Substation",
         "method": "GET",
         "url": "/api/Substation/get-substations-by-subdivision/{subdivisionId}",
@@ -796,7 +796,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "85",
-        "name": "Unnamed API",
+        "name": "Substation Get-substations-combo",
         "group": "Substation",
         "method": "GET",
         "url": "/api/Substation/get-substations-combo",
@@ -805,7 +805,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "86",
-        "name": "Unnamed API",
+        "name": "Substation Get-substations-combo-by-subdivision",
         "group": "Substation",
         "method": "GET",
         "url": "/api/Substation/get-substations-combo-by-subdivision/{subdivisionId}",
@@ -814,7 +814,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "87",
-        "name": "Unnamed API",
+        "name": "Substation",
         "group": "Substation",
         "method": "GET",
         "url": "/api/Substation/{substationId}",
@@ -823,7 +823,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "88",
-        "name": "Unnamed API",
+        "name": "Substation Add-substation",
         "group": "Substation",
         "method": "POST",
         "url": "/api/Substation/add-substation",
@@ -833,7 +833,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "89",
-        "name": "Unnamed API",
+        "name": "Substation Update-substation",
         "group": "Substation",
         "method": "PUT",
         "url": "/api/Substation/update-substation",
@@ -843,7 +843,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "90",
-        "name": "Unnamed API",
+        "name": "Substation Delete-substation",
         "group": "Substation",
         "method": "PUT",
         "url": "/api/Substation/delete-substation",
@@ -853,7 +853,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "91",
-        "name": "Unnamed API",
+        "name": "User Get-users",
         "group": "User",
         "method": "GET",
         "url": "/api/User/get-users",
@@ -862,7 +862,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "92",
-        "name": "Unnamed API",
+        "name": "User Get-roles-combo",
         "group": "User",
         "method": "GET",
         "url": "/api/User/get-roles-combo",
@@ -871,7 +871,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "93",
-        "name": "Unnamed API",
+        "name": "User Get-users-combo",
         "group": "User",
         "method": "GET",
         "url": "/api/User/get-users-combo",
@@ -880,7 +880,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "94",
-        "name": "Unnamed API",
+        "name": "User Get-users-combo-by-roleId",
         "group": "User",
         "method": "GET",
         "url": "/api/User/get-users-combo-by-roleId/{roleId}",
@@ -889,7 +889,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "95",
-        "name": "Unnamed API",
+        "name": "User Create-user",
         "group": "User",
         "method": "POST",
         "url": "/api/User/create-user",
@@ -899,7 +899,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "96",
-        "name": "Unnamed API",
+        "name": "User Update-user",
         "group": "User",
         "method": "PUT",
         "url": "/api/User/update-user",
@@ -909,7 +909,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "97",
-        "name": "Unnamed API",
+        "name": "User Delete-user",
         "group": "User",
         "method": "PUT",
         "url": "/api/User/delete-user",
@@ -919,7 +919,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "98",
-        "name": "Unnamed API",
+        "name": "User Get-user-byId",
         "group": "User",
         "method": "GET",
         "url": "/api/User/get-user-byId",
@@ -928,7 +928,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "99",
-        "name": "Unnamed API",
+        "name": "User Get-user-byPhone",
         "group": "User",
         "method": "GET",
         "url": "/api/User/get-user-byPhone",
@@ -937,7 +937,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "100",
-        "name": "Unnamed API",
+        "name": "User Get-user-byEmail",
         "group": "User",
         "method": "GET",
         "url": "/api/User/get-user-byEmail",
@@ -946,7 +946,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "101",
-        "name": "Unnamed API",
+        "name": "User Change-password",
         "group": "User",
         "method": "POST",
         "url": "/api/User/change-password",
@@ -956,7 +956,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "102",
-        "name": "Unnamed API",
+        "name": "User Forgot-password",
         "group": "User",
         "method": "POST",
         "url": "/api/User/forgot-password",
@@ -966,7 +966,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "103",
-        "name": "Unnamed API",
+        "name": "User Reset-password",
         "group": "User",
         "method": "POST",
         "url": "/api/User/reset-password",
@@ -976,7 +976,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "104",
-        "name": "Unnamed API",
+        "name": "UserSubstation Get-user-substation-map",
         "group": "UserSubstation",
         "method": "GET",
         "url": "/api/UserSubstation/get-user-substation-map",
@@ -985,7 +985,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "105",
-        "name": "Unnamed API",
+        "name": "UserSubstation Get-user-substation",
         "group": "UserSubstation",
         "method": "GET",
         "url": "/api/UserSubstation/get-user-substation/{userId}",
@@ -994,7 +994,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "106",
-        "name": "Unnamed API",
+        "name": "UserSubstation Get-substation-by-user",
         "group": "UserSubstation",
         "method": "GET",
         "url": "/api/UserSubstation/get-substation-by-user/{userId}",
@@ -1003,7 +1003,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "107",
-        "name": "Unnamed API",
+        "name": "UserSubstation Add-user-substation",
         "group": "UserSubstation",
         "method": "POST",
         "url": "/api/UserSubstation/add-user-substation",
@@ -1013,7 +1013,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "108",
-        "name": "Unnamed API",
+        "name": "UserSubstation Update-user-substation",
         "group": "UserSubstation",
         "method": "POST",
         "url": "/api/UserSubstation/update-user-substation",
@@ -1023,7 +1023,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "109",
-        "name": "Unnamed API",
+        "name": "UserSubstation Delete-user-substation",
         "group": "UserSubstation",
         "method": "PUT",
         "url": "/api/UserSubstation/delete-user-substation",
@@ -1033,7 +1033,7 @@ export const DEFAULT_APIS: ApiEndpoint[] = [
     },
     {
         "id": "110",
-        "name": "Unnamed API",
+        "name": "Values",
         "group": "Values",
         "method": "GET",
         "url": "/api/Values",

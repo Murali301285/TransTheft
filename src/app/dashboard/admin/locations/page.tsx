@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { clsx } from 'clsx';
+import { useLanguage } from '@/context/LanguageContext';
 
 type LocationType = 'circle' | 'division' | 'subDivision' | 'section' | 'substation';
 
@@ -27,6 +28,7 @@ const TABS: { id: LocationType; label: string; icon: any }[] = [
 
 export default function LocationMasterPage() {
     const router = useRouter();
+    const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState<LocationType>('circle');
     const [data, setData] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -142,27 +144,21 @@ export default function LocationMasterPage() {
 
     return (
         <div className="space-y-6 animate-fade-in">
-            <div>
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => router.push('/dashboard/admin')}
-                    className="mb-2 pl-0 hover:bg-transparent text-slate-500 hover:text-slate-900"
-                >
-                    <ArrowLeft size={16} className="mr-2" /> Back to Administration
-                </Button>
-                <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-indigo-100 text-indigo-600 rounded-lg">
-                            <MapPin size={24} />
-                        </div>
-                        <div>
-                            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600">Location Master</h1>
-                            <p className="text-muted-foreground">Manage network hierarchy levels.</p>
-                        </div>
+            <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-[hsl(var(--border))] shadow-sm">
+                <div className="flex items-center gap-4">
+                    <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/admin')}>
+                        <ArrowLeft size={18} />
+                    </Button>
+                    <div>
+                        <h1 className="text-xl font-bold flex items-center gap-2 text-slate-800">
+                            <MapPin className="text-indigo-600" /> {t('admin.locations')}
+                        </h1>
+                        <p className="text-xs text-muted-foreground">{t('desc.locations')}</p>
                     </div>
-                    <Button onClick={handleAdd} className="bg-indigo-600 hover:bg-indigo-700 text-white">
-                        <Plus className="mr-2 h-4 w-4" /> Add {TABS.find(t => t.id === activeTab)?.label.slice(0, -1)}
+                </div>
+                <div className="flex gap-2">
+                    <Button onClick={handleAdd} className="bg-indigo-600 hover:bg-indigo-700 text-white" size="sm">
+                        <Plus size={16} className="mr-2" /> Add {TABS.find(t => t.id === activeTab)?.label.slice(0, -1)}
                     </Button>
                 </div>
             </div>
@@ -196,6 +192,14 @@ export default function LocationMasterPage() {
                     data={data}
                     isLoading={isLoading}
                     searchKey={`${activeTab}Name`}
+                    exportFileName={(() => {
+                        const tabObj = TABS.find(t => t.id === activeTab);
+                        return tabObj ? tabObj.label : 'Locations';
+                    })()}
+                    exportTitle={(() => {
+                        const tabObj = TABS.find(t => t.id === activeTab);
+                        return tabObj ? `${tabObj.label} List` : 'Locations List';
+                    })()}
                 />
             </div>
 

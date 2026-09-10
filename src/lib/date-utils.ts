@@ -1,44 +1,54 @@
-
 /**
- * Formats a date string or Date object to 'dd/mm/yyyy'.
- * This function avoids timezone conversion by strictly parsing standard ISO date strings (YYYY-MM-DD...)
+ * Formats a date string or Date object to 'dd/mm/yyyy' or 'dd/mm/yyyy hh:mm:ss'.
+ * This function avoids timezone conversion by strictly parsing standard ISO or space-separated date strings (YYYY-MM-DD...)
  * and rearranging the parts.
  * 
- * @param dateInput - The date string (ISO) or Date object.
- * @returns Formatted string 'dd/mm/yyyy' or '-' if invalid.
+ * @param dateInput - The date string or Date object.
+ * @returns Formatted string 'dd/mm/yyyy [hh:mm:ss]' or '-' if invalid.
  */
 export function formatDate(dateInput: string | Date | undefined | null): string {
-    if (!dateInput) return '-';
+    if (!dateInput || dateInput === '-') return '-';
 
     try {
         let dateStr = '';
 
         if (dateInput instanceof Date) {
-            // For Date objects, we have to trust the local instance methods
-            // But if the user strictly said "no timezone conversion", they likely deal with strings from API.
-            // Converting Date to ISO string to treat it uniformly.
             dateStr = dateInput.toISOString();
         } else {
-            dateStr = dateInput;
+            dateStr = String(dateInput).trim();
         }
 
-        // Handle ISO-like strings: YYYY-MM-DD...
-        // This regex looks for the pattern at the start of the string
-        const match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (!dateStr || dateStr === '-') return '-';
 
-        if (match) {
-            const [_, year, month, day] = match;
+        // Try to match YYYY-MM-DD HH:MM:SS (with space or T separating date and time)
+        const matchWithTime = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})/);
+        if (matchWithTime) {
+            const [_, year, month, day, hours, minutes, seconds] = matchWithTime;
+            return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+        }
+
+        // Try to match YYYY-MM-DD (date only)
+        const matchDateOnly = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (matchDateOnly) {
+            const [_, year, month, day] = matchDateOnly;
             return `${day}/${month}/${year}`;
         }
 
-        // Fallback: If it's not a standard ISO string, try to parse it (though this might do TZ conversion)
-        const d = new Date(dateInput);
-        if (isNaN(d.getTime())) return String(dateInput); // Return original if parsing fails
+        // Fallback: If it's not standard YYYY-MM-DD, try to parse
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr; // Return original if parsing fails
 
         const day = String(d.getDate()).padStart(2, '0');
         const month = String(d.getMonth() + 1).padStart(2, '0');
         const year = d.getFullYear();
+        const hours = String(d.getHours()).padStart(2, '0');
+        const minutes = String(d.getMinutes()).padStart(2, '0');
+        const seconds = String(d.getSeconds()).padStart(2, '0');
 
+        // Check if there is time information in the original string
+        if (dateStr.includes(':') || dateInput instanceof Date) {
+            return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+        }
         return `${day}/${month}/${year}`;
 
     } catch (e) {

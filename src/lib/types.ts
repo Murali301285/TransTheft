@@ -6,15 +6,21 @@ export interface User {
     email: string;
     role: 'admin' | 'circle_head' | 'division_head' | 'feeder_manager' | 'viewer';
     permissions: string[];
+    firstName?: string;
+    lastName?: string;
+    photo?: string;
+    mobile?: string;
+    remarks?: string;
 }
 
 export interface HierarchyNode {
     id: string;
     name: string;
-    type: 'circle' | 'division' | 'sub_division' | 'feeder' | 'transformer';
+    type: 'company' | 'region' | 'circle' | 'division' | 'subDivision' | 'sub_division' | 'substation' | 'feeder' | 'transformer';
     parentId?: string;
     children?: HierarchyNode[];
     details?: TransformerDetails;
+    data?: any;
 }
 
 export interface TransformerDetails {
@@ -25,10 +31,10 @@ export interface TransformerDetails {
     lat: number;
     lng: number;
     capacity: string;
-    status: 'active' | 'inactive' | 'alert' | 'maintenance';
+    status: 'active' | 'inactive' | 'alert' | 'maintenance' | 'disabled';
     lastPing: string;
     address: string;
-    nearestCustomers: Customer[];
+    nearestCustomers?: Customer[];
 }
 
 export interface Customer {

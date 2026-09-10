@@ -3,30 +3,29 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { useText } from '@/lib/i18n';
+import { useLanguage } from '@/context/LanguageContext';
 import { useAppStore } from '@/lib/store';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { LanguageSelector } from '@/components/LanguageSelector';
-import { Mail, Lock, Eye, EyeOff, Zap, ShieldCheck } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Zap, ShieldCheck, KeyRound } from 'lucide-react';
 import { ApiService, TokenService } from '@/services/api';
-
-const BACKGROUNDS = [
-    'bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900', // Deep Tech
-    'bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900', // Modern
-    'bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900', // Eco
-];
+import { Modal } from '@/components/ui/Modal';
+import { toast } from 'sonner';
 
 export default function LoginPage() {
     const router = useRouter();
-    const { t } = useText();
+    const { t } = useLanguage();
     const { login } = useAppStore();
 
-    const [bgIndex, setBgIndex] = useState(0);
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-
     const [formData, setFormData] = useState({ identifier: '', password: '' });
+
+    // Forgot Password States
+    const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+    const [resetIdentifier, setResetIdentifier] = useState('');
+    const [isResetSending, setIsResetSending] = useState(false);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -41,7 +40,6 @@ export default function LoginPage() {
             if (response.success && response.data) {
                 console.log('Login API Response:', response.data);
 
-                // Structure: { status: true, response: { accessToken: "..." } }
                 const apiData = response.data as any;
                 const innerResponse = apiData.response || apiData.result || apiData;
 
@@ -78,24 +76,33 @@ export default function LoginPage() {
         }
     };
 
-    return (
-        <div className={`min-h-screen w-full relative flex items-center justify-center transition-colors duration-1000 ${BACKGROUNDS[bgIndex]}`}>
-            {/* Background Toggle - User Requirement "option to change" */}
-            <button
-                onClick={() => setBgIndex((prev) => (prev + 1) % BACKGROUNDS.length)}
-                className="absolute top-6 right-20 text-white/50 hover:text-white transition-colors"
-                title="Change Theme"
-            >
-                <div className="w-6 h-6 rounded-full border border-current" />
-            </button>
+    const handleResetSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!resetIdentifier.trim()) {
+            toast.error("Please enter your registered Email or Mobile Number");
+            return;
+        }
 
-            {/* Header Icons Requirement */}
+        setIsResetSending(true);
+        // Simulate reset instructions trigger
+        setTimeout(() => {
+            setIsResetSending(false);
+            setIsForgotPasswordOpen(false);
+            toast.success(`Password reset instructions sent to ${resetIdentifier}`);
+            setResetIdentifier('');
+        }, 1500);
+    };
+
+    return (
+        <div className="min-h-screen w-full relative flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+            {/* Header Icons */}
             <div className="absolute top-6 left-6 text-white flex items-center gap-2">
                 <Zap className="h-8 w-8 text-[hsl(var(--warning))]" />
                 <span className="font-bold text-xl tracking-tight hidden md:block">Transformer Guard</span>
             </div>
 
-            <div className="absolute top-6 right-6">
+            {/* Header Controls */}
+            <div className="absolute top-6 right-6 z-50">
                 <LanguageSelector />
             </div>
 
@@ -110,43 +117,43 @@ export default function LoginPage() {
                         <ShieldCheck className="w-8 h-8 text-[hsl(var(--primary-foreground))]" />
                     </div>
                     <h2 className="text-3xl font-bold text-white mb-2">{t('login')}</h2>
-                    <p className="text-blue-200 text-sm">Secure Access Portal</p>
+                    <p className="text-blue-200 text-sm">{t('secure_portal') || 'Secure Access Portal'}</p>
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-6">
                     <Input
-                        placeholder="Mobile Number or Email"
+                        placeholder={t('username_placeholder') || "Mobile Number or Email"}
                         value={formData.identifier}
                         onChange={e => setFormData({ ...formData, identifier: e.target.value })}
                         leftIcon={<Mail size={18} />}
                         className="bg-white/5 border-white/10 text-white placeholder:text-white/40 focus:border-[hsl(var(--primary))]"
                     />
 
-                    <div className="relative">
-                        <Input
-                            type={showPassword ? 'text' : 'password'}
-                            placeholder={t('password')}
-                            value={formData.password}
-                            onChange={e => setFormData({ ...formData, password: e.target.value })}
-                            leftIcon={<Lock size={18} />}
-                            className="bg-white/5 border-white/10 text-white placeholder:text-white/40 focus:border-[hsl(var(--primary))]"
-                        />
+                    <Input
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder={t('password')}
+                        value={formData.password}
+                        onChange={e => setFormData({ ...formData, password: e.target.value })}
+                        leftIcon={<Lock size={18} />}
+                        rightIcon={
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="text-white/50 hover:text-white focus:outline-none"
+                            >
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
+                        }
+                        className="bg-white/5 border-white/10 text-white placeholder:text-white/40 focus:border-[hsl(var(--primary))]"
+                    />
+
+                    <div className="flex justify-end text-sm">
                         <button
                             type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white"
+                            onClick={() => setIsForgotPasswordOpen(true)}
+                            className="text-[hsl(var(--accent))] hover:underline text-blue-200"
                         >
-                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                        </button>
-                    </div>
-
-                    <div className="flex items-center justify-between text-sm">
-                        <label className="flex items-center gap-2 text-blue-200 cursor-pointer">
-                            <input type="checkbox" className="rounded border-white/20 bg-transparent" />
-                            Remember me
-                        </label>
-                        <button type="button" className="text-[hsl(var(--accent))] hover:underline">
-                            Forgot Password?
+                            {t('forgot_password') || 'Forgot Password?'}
                         </button>
                     </div>
 
@@ -160,11 +167,58 @@ export default function LoginPage() {
 
                     <div className="text-center mt-6">
                         <p className="text-blue-200 text-sm">
-                            New User? <button type="button" className="text-white font-semibold hover:underline">Sign Up</button>
+                            {t('new_user') || 'New User?'} <button type="button" onClick={() => router.push('/signup')} className="text-white font-semibold hover:underline">{t('sign_up') || 'Sign Up'}</button>
                         </p>
                     </div>
                 </form>
             </motion.div>
+
+            {/* Forgot Password Modal */}
+            <Modal
+                isOpen={isForgotPasswordOpen}
+                onClose={() => setIsForgotPasswordOpen(false)}
+                title="Reset Password"
+            >
+                <form onSubmit={handleResetSubmit} className="space-y-6 py-2">
+                    <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto text-blue-600 ring-4 ring-blue-50">
+                        <KeyRound size={32} />
+                    </div>
+                    
+                    <div className="text-center space-y-2">
+                        <h4 className="text-lg font-bold text-slate-900">Forgot Password</h4>
+                        <p className="text-sm text-slate-500 max-w-sm mx-auto">
+                            Enter your registered Email or Mobile Number below, and we will send you password reset instructions.
+                        </p>
+                    </div>
+
+                    <Input
+                        label="Email Address or Mobile Number"
+                        placeholder="e.g. user@example.com or +919876543210"
+                        value={resetIdentifier}
+                        onChange={e => setResetIdentifier(e.target.value)}
+                        required
+                    />
+
+                    <div className="flex gap-3 justify-end pt-4 border-t">
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={() => setIsForgotPasswordOpen(false)}
+                            className="text-slate-600 bg-slate-100 hover:bg-slate-200"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="submit"
+                            variant="primary"
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                            isLoading={isResetSending}
+                        >
+                            Send Reset Instructions
+                        </Button>
+                    </div>
+                </form>
+            </Modal>
 
             {/* Footer */}
             <div className="absolute bottom-4 text-center w-full text-white/20 text-xs">

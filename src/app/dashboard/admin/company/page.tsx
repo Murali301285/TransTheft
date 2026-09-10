@@ -7,12 +7,14 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
-import { Plus, Pencil, Trash2, Building2, ArrowLeft } from 'lucide-react';
+import { Plus, Pencil, Trash2, Building2, ArrowLeft, ClipboardPaste } from 'lucide-react';
 import { ApiService } from '@/services/api';
 import { toast } from 'sonner';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface Company {
-    companyId?: number;
+    id?: number;
+    companyId?: number; // Backend might use either, keeping for safety but 'id' is primary according to Swagger
     companyName: string;
     address: string;
     city: string;
@@ -23,6 +25,7 @@ interface Company {
 }
 
 const INITIAL_FORM: Company = {
+    id: 0,
     companyName: '',
     address: '',
     city: '',
@@ -34,6 +37,7 @@ const INITIAL_FORM: Company = {
 
 export default function CompanyMasterPage() {
     const router = useRouter();
+    const { t } = useLanguage();
     const [companies, setCompanies] = useState<Company[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,7 +46,7 @@ export default function CompanyMasterPage() {
     const [formData, setFormData] = useState<Company>(INITIAL_FORM);
 
     const columns: ColumnDef<Company>[] = useMemo(() => [
-        { accessorKey: 'companyId', header: 'ID' },
+        { accessorKey: 'id', header: 'ID' },
         { accessorKey: 'companyName', header: 'Company Name' },
         { accessorKey: 'address', header: 'Address' },
         { accessorKey: 'city', header: 'City' },
@@ -64,7 +68,7 @@ export default function CompanyMasterPage() {
                     <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleDelete(row.original.companyId!)}
+                        onClick={() => handleDelete(row.original.id || row.original.companyId!)}
                         className="text-red-600 hover:text-red-700 hover:bg-red-50"
                     >
                         <Trash2 size={14} className="mr-1" /> Delete
@@ -129,20 +133,23 @@ export default function CompanyMasterPage() {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            const payload = { ...formData };
+            // Construct payload strictly according to Swagger DTO
+            const payload = {
+                id: isEditing ? (formData.id || formData.companyId) : 0,
+                companyCode: formData.companyName.substring(0, 3).toUpperCase() + Math.floor(Math.random() * 1000),
+                companyName: formData.companyName,
+                shortName: formData.companyName.substring(0, 10),
+                address: formData.address || 'N/A',
+                pincode: '500001' // Default dummy pincode
+            };
+
             let res;
             if (isEditing) {
-                // Ensure ID is present for update
-                if (!payload.companyId) {
-                    toast.error("Invalid Company ID for update");
-                    setIsSubmitting(false);
-                    return;
-                }
-                res = await ApiService.company.update(payload);
+                // For update, ensuring the ID is set
+                const updatePayload = { ...payload, id: (formData.id || formData.companyId)! };
+                res = await ApiService.company.update(updatePayload);
             } else {
-                // Remove ID for create/insert if it causes issues, or keep it 0/undefined
-                const { companyId, ...createPayload } = payload;
-                res = await ApiService.company.create(createPayload);
+                res = await ApiService.company.create(payload);
             }
 
             if (res.success) {
@@ -166,27 +173,22 @@ export default function CompanyMasterPage() {
 
     return (
         <div className="space-y-6 animate-fade-in">
-            <div>
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => router.push('/dashboard/admin')}
-                    className="mb-2 pl-0 hover:bg-transparent text-slate-500 hover:text-slate-900"
-                >
-                    <ArrowLeft size={16} className="mr-2" /> Back to Administration
-                </Button>
-                <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-amber-100 text-amber-600 rounded-lg">
-                            <Building2 size={24} />
-                        </div>
-                        <div>
-                            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-600 to-yellow-600">Company Master</h1>
-                            <p className="text-muted-foreground">Manage authorized utility companies and providers.</p>
-                        </div>
+            <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-[hsl(var(--border))] shadow-sm mb-6">
+                <div className="flex items-center gap-4">
+                    <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/admin')}>
+                        <ArrowLeft size={18} />
+                    </Button>
+                    <div>
+                        <h1 className="text-xl font-bold flex items-center gap-2 text-slate-800">
+                            <Building2 className="text-amber-600" /> {t('admin.company')}
+                        </h1>
+                        <p className="text-xs text-muted-foreground">{t('desc.company')}</p>
                     </div>
-                    <Button onClick={handleAdd} className="bg-amber-600 hover:bg-amber-700 text-white">
-                        <Plus className="mr-2 h-4 w-4" /> Add Company
+                </div>
+                <div className="flex gap-2">
+                    <Button variant="outline" size="sm"><ClipboardPaste size={14} className="mr-2" /> Import</Button>
+                    <Button size="sm" onClick={handleAdd} className="bg-amber-600 hover:bg-amber-700 text-white">
+                        <Plus size={16} className="mr-2" /> Add Company
                     </Button>
                 </div>
             </div>
@@ -197,6 +199,8 @@ export default function CompanyMasterPage() {
                     data={companies}
                     isLoading={isLoading}
                     searchKey="companyName"
+                    exportFileName="Companies"
+                    exportTitle="Companies List"
                 />
             </div>
 
@@ -244,7 +248,12 @@ export default function CompanyMasterPage() {
                             label="Phone"
                             placeholder="Contact Number"
                             value={formData.contactNumber}
-                            onChange={(e) => handleChange('contactNumber', e.target.value)}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                if (/^\d*$/.test(val)) {
+                                    handleChange('contactNumber', val);
+                                }
+                            }}
                         />
                     </div>
                     <Input

@@ -1,14 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DataTable } from '@/components/DataTable/DataTable';
 import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Modal } from '@/components/ui/Modal';
 import { Plus, Upload, HardDrive, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { BulkUpload } from '@/components/Admin/BulkUpload';
 import { clsx } from "clsx";
 import { formatDate } from '@/lib/date-utils';
+import { ApiService } from '@/services/api';
+import { toast } from 'sonner';
 
 // Type definition for SIM Master
 export interface SimMaster {
@@ -22,15 +26,7 @@ export interface SimMaster {
 }
 
 // Mock Data
-const MOCK_SIMS: SimMaster[] = Array.from({ length: 20 }).map((_, i) => ({
-    id: `SIM-${5000 + i}`,
-    imei: `86492004${100000 + i}`,
-    phoneNumber: `98765${10000 + i}`,
-    provider: i % 3 === 0 ? 'Airtel' : i % 3 === 1 ? 'Jio' : 'VI',
-    planExpiry: '2025-12-31',
-    linkedTransformerId: i % 2 === 0 ? `TR-${1000 + i}` : undefined,
-    status: i % 10 === 0 ? 'expired' : 'active'
-}));
+const MOCK_SIMS: SimMaster[] = [];
 
 const COLUMNS: ColumnDef<SimMaster>[] = [
     { accessorKey: 'id', header: 'SIM ID' },
@@ -90,30 +86,73 @@ const COLUMNS: ColumnDef<SimMaster>[] = [
 export default function SimMasterPage() {
     const router = useRouter();
     const [isBulkMode, setIsBulkMode] = useState(false);
+    const [sims, setSims] = useState<SimMaster[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [formData, setFormData] = useState({ phoneNumber: '', imei: '', provider: 'Airtel', planExpiry: '' });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const fetchSims = async () => {
+        setIsLoading(true);
+        try {
+            const res = await ApiService.sims.getAll();
+            if (res.success && res.data) {
+                const list = Array.isArray(res.data) ? res.data : (res.data as any).result || [];
+                setSims(list);
+            }
+        } catch (e) { toast.error("Failed to fetch SIMs"); }
+        finally { setIsLoading(false); }
+    };
+
+    useEffect(() => { fetchSims(); }, []);
+
+    const handleAdd = () => {
+        setFormData({ phoneNumber: '', imei: '', provider: 'Airtel', planExpiry: '' });
+        setIsModalOpen(true);
+    };
+
+    const handleSave = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        try {
+            const res = await ApiService.sims.create(formData);
+            if (res.success) {
+                toast.success("SIM added successfully");
+                setIsModalOpen(false);
+                fetchSims();
+            } else {
+                toast.error(res.message || "Failed to add SIM");
+            }
+        } catch (e) { toast.error("Network Error"); }
+        finally { setIsSubmitting(false); }
+    };
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <div>
-                    <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/admin')} className="mb-2 pl-0 hover:bg-transparent text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]">
-                        <ArrowLeft size={16} className="mr-2" /> Back to Administration
+            <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-[hsl(var(--border))] shadow-sm mb-6">
+                <div className="flex items-center gap-4">
+                    <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/admin')}>
+                        <ArrowLeft size={18} />
                     </Button>
-                    <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--secondary))]">
-                        SIM Card Master
-                    </h2>
-                    <p className="text-[hsl(var(--muted-foreground))]">Manage Connectivity and IOT SIMs.</p>
+                    <div>
+                        <h1 className="text-xl font-bold flex items-center gap-2 text-slate-800">
+                            <HardDrive className="text-blue-600" /> SIM Card Master
+                        </h1>
+                        <p className="text-xs text-muted-foreground">Manage Connectivity and IOT SIMs.</p>
+                    </div>
                 </div>
 
                 <div className="flex gap-2">
                     <Button
-                        variant={isBulkMode ? "secondary" : "outline"}
+                        variant="outline"
+                        size="sm"
                         onClick={() => setIsBulkMode(!isBulkMode)}
                     >
-                        {isBulkMode ? <HardDrive size={16} className="mr-2" /> : <Upload size={16} className="mr-2" />}
+                        {isBulkMode ? <HardDrive size={14} className="mr-2" /> : <Upload size={14} className="mr-2" />}
                         {isBulkMode ? "View List" : "Bulk Upload"}
                     </Button>
                     {!isBulkMode && (
-                        <Button>
+                        <Button size="sm" className="bg-blue-600 text-white" onClick={handleAdd}>
                             <Plus size={16} className="mr-2" /> Add New
                         </Button>
                     )}
@@ -130,11 +169,58 @@ export default function SimMasterPage() {
                 ) : (
                     <DataTable
                         columns={COLUMNS}
-                        data={MOCK_SIMS}
+                        data={sims}
                         searchKey="phoneNumber"
+                        isLoading={isLoading}
+                        exportFileName="SIMs"
+                        exportTitle="SIMs List"
                     />
                 )}
             </div>
+
+            <Modal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                title="Add New SIM Card"
+            >
+                <form onSubmit={handleSave} className="space-y-4">
+                    <Input
+                        label="Phone Number"
+                        value={formData.phoneNumber}
+                        onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                        required
+                    />
+                    <Input
+                        label="IMEI"
+                        value={formData.imei}
+                        onChange={(e) => setFormData({ ...formData, imei: e.target.value })}
+                        required
+                    />
+                    <div>
+                        <label className="text-sm font-medium mb-1 block">Provider</label>
+                        <select
+                            className="w-full border rounded-md p-2 text-sm"
+                            value={formData.provider}
+                            onChange={(e) => setFormData({ ...formData, provider: e.target.value })}
+                        >
+                            <option value="Airtel">Airtel</option>
+                            <option value="Jio">Jio</option>
+                            <option value="VI">VI</option>
+                            <option value="BSNL">BSNL</option>
+                        </select>
+                    </div>
+                    <Input
+                        label="Plan Expiry"
+                        type="date"
+                        value={formData.planExpiry}
+                        onChange={(e) => setFormData({ ...formData, planExpiry: e.target.value })}
+                    />
+                    <div className="flex justify-end gap-3 pt-4">
+                        <Button type="button" variant="ghost" onClick={() => setIsModalOpen(false)}>Cancel</Button>
+                        <Button type="submit" disabled={isSubmitting} className="bg-blue-600 text-white">Save</Button>
+                    </div>
+                </form>
+            </Modal>
         </div>
     );
 }

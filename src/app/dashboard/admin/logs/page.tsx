@@ -51,7 +51,13 @@ export default function LogsPage() {
                 </Button>
             </div>
             <div className="bg-[hsl(var(--surface))] rounded-xl border border-[hsl(var(--border))] p-6 shadow-sm animate-fade-in">
-                <DataTable columns={COLUMNS} data={MOCK_LOGS} searchKey="user" />
+                <DataTable 
+                    columns={COLUMNS} 
+                    data={MOCK_LOGS} 
+                    searchKey="user" 
+                    exportFileName="Audit-Logs"
+                    exportTitle="Audit Logs List"
+                />
             </div>
         </div>
     );

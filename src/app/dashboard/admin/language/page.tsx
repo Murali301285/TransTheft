@@ -14,8 +14,11 @@ import {
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
+import { useLanguage } from '@/context/LanguageContext';
+
 export default function LanguageSettingsPage() {
     const router = useRouter();
+    const { t } = useLanguage();
     const [items, setItems] = useState<LanguageItem[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isBulkOpen, setIsBulkOpen] = useState(false);
@@ -178,9 +181,9 @@ export default function LanguageSettingsPage() {
                     </Button>
                     <div>
                         <h1 className="text-xl font-bold flex items-center gap-2 text-slate-800">
-                            <Languages className="text-indigo-600" /> Language Settings
+                            <Languages className="text-indigo-600" /> {t('admin.language')}
                         </h1>
-                        <p className="text-xs text-muted-foreground">Manage multi-language translations</p>
+                        <p className="text-xs text-muted-foreground">{t('desc.language')}</p>
                     </div>
                 </div>
                 <div className="flex gap-2">
@@ -196,6 +199,8 @@ export default function LanguageSettingsPage() {
                     columns={columns}
                     data={items}
                     searchKey="en"
+                    exportFileName="Languages"
+                    exportTitle="Languages Translation List"
                 />
             </div>
 

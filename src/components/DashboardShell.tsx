@@ -18,12 +18,11 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     return (
         <div className="min-h-screen bg-[hsl(var(--background))] flex flex-col relative overflow-hidden">
             {/* Background for Main Dashboard */}
-            {isHomePage && (
-                <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center opacity-[0.03]">
-                    {/* Giant Transformer/Electric Icon Watermark */}
-                    <Zap size={800} strokeWidth={0.5} />
-                </div>
-            )}
+            {/* Background for All Pages */}
+            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center opacity-[0.03]">
+                {/* Giant Transformer/Electric Icon Watermark */}
+                <Zap size={800} strokeWidth={0.5} />
+            </div>
 
             <Header
                 onMenuClick={() => setIsSidebarOpen(true)}
@@ -36,7 +35,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             )}
 
             <main className={clsx(
-                "pt-16 min-h-screen transition-all flex flex-col pb-12",
+                "pt-24 min-h-screen transition-all flex flex-col pb-12",
                 !isFullWidthPage && "lg:ml-64"
             )}>
                 <div className={clsx(

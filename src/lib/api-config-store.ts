@@ -5,7 +5,7 @@ import { DEFAULT_APIS } from './default-apis';
 
 export type { ApiEndpoint };
 
-const STORAGE_KEY = 'api_config_store_v2';
+const STORAGE_KEY = 'api_config_store_v3';
 
 export const ApiConfigService = {
     getAll: (): ApiEndpoint[] => {

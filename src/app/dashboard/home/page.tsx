@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Activity, ShieldAlert, FileBarChart, Users, Settings, ArrowRight } from 'lucide-react';
+import { Activity, ShieldAlert, FileBarChart, Users, Settings, ArrowRight, GraduationCap, UserCheck, Bot, FileText } from 'lucide-react';
 import { clsx } from 'clsx';
 
 const SECTIONS = [
     {
-        title: 'LC Management',
+        title: 'Transformer Dashboard',
         description: 'Smart Dashboard, Real-time status, and Nearest Neighbour details.',
         icon: Activity,
         href: '/dashboard/lc-management',
@@ -31,7 +31,7 @@ const SECTIONS = [
         shadow: 'shadow-emerald-500/20'
     },
     {
-        title: 'Alert Status',
+        title: 'Alert Management',
         description: 'View active theft attempts and trigger notifications.',
         icon: ShieldAlert,
         href: '/dashboard/alerts',
@@ -68,7 +68,7 @@ export default function DashboardHome() {
                 variants={container}
                 initial="hidden"
                 animate="show"
-                className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+                className="grid grid-cols-1 md:grid-cols-2 gap-6"
             >
                 {SECTIONS.map((section) => {
                     const Icon = section.icon;
