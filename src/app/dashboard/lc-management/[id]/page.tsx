@@ -39,6 +39,17 @@ const formatCapacity = (cap: any) => {
     return `${capStr} KVA`;
 };
 
+// Helper to format/clean customer name (e.g. deduplicating "Name - Name")
+const formatCustomerName = (raw: any): string => {
+    if (!raw || typeof raw !== 'string' || raw.trim() === '' || raw.trim() === '-') return '-';
+    const trimmed = raw.trim();
+    const parts = trimmed.split(' - ');
+    if (parts.length === 2 && parts[0].trim().toLowerCase() === parts[1].trim().toLowerCase()) {
+        return parts[0].trim();
+    }
+    return trimmed;
+};
+
 // Helper to parse date strings for reliable chronological sorting
 const parseTimestamp = (val: any): number => {
     if (!val || val === '-') return 0;
@@ -142,6 +153,10 @@ export default function TransformerDetailPage() {
                         id: resolvedId,
                         transformerCode: cleanCode || masterMatch?.transformerCode || null,
                         name: cleanCode ? `Transformer ${cleanCode}` : `Transformer ${item.id || 'Unknown'}`,
+                        customerName: formatCustomerName(item.customerName || item.CustomerName || masterMatch?.customerName || masterMatch?.CustomerName || item.ownerName || item.OwnerName || masterMatch?.ownerName || masterMatch?.OwnerName || '-'),
+                        subDivision: item.subDivision || item.SubDivision || masterMatch?.subDivision || masterMatch?.subDivisionName || masterMatch?.SubDivision || '-',
+                        substation: substation || '-',
+                        feeder: item.feeder || item.Feeder || masterMatch?.feederName || masterMatch?.Feeder || masterMatch?.feeder || '-',
                         circle: item.circleName || item.CircleName || null,
                         division: item.divisionName || item.DivisionName || null,
                         lat: parseFloat(item.latitude || item.Latitude || masterMatch?.latitude) || null,
@@ -290,6 +305,10 @@ export default function TransformerDetailPage() {
                             transformerCode: cleanId,
                             name: mMatch.name || cleanId,
                             subStationId: mMatch.subStationId || null,
+                            customerName: formatCustomerName(mMatch.customerName || mMatch.ownerName || '-'),
+                            subDivision: mMatch.subDivision || mMatch.subDivisionName || '-',
+                            substation: mMatch.subStationName || mMatch.substation || '-',
+                            feeder: mMatch.feederName || mMatch.feeder || '-',
                             address: mMatch.address || mMatch.subStationName || null,
                             lat: parseFloat(mMatch.latitude) || null,
                             lng: parseFloat(mMatch.longitude) || null,
@@ -385,8 +404,8 @@ export default function TransformerDetailPage() {
                     setTransformer({
                         ...matchedTrans,
                         address: ssAddress || matchedTrans.address || null,
-                        lat: ssLat !== null ? ssLat : matchedTrans.lat,
-                        lng: ssLng !== null ? ssLng : matchedTrans.lng,
+                        lat: (matchedTrans.lat !== null && matchedTrans.lat !== undefined && !isNaN(matchedTrans.lat)) ? matchedTrans.lat : ssLat,
+                        lng: (matchedTrans.lng !== null && matchedTrans.lng !== undefined && !isNaN(matchedTrans.lng)) ? matchedTrans.lng : ssLng,
                     });
                 } else {
                     // Fallback to parse ID
@@ -394,6 +413,10 @@ export default function TransformerDetailPage() {
                         id: id,
                         transformerCode: cleanId,
                         name: cleanId,
+                        customerName: '-',
+                        subDivision: '-',
+                        substation: '-',
+                        feeder: '-',
                         address: null,
                         lat: null,
                         lng: null,
@@ -1000,38 +1023,43 @@ export default function TransformerDetailPage() {
  
                         <div className="grid grid-cols-2 gap-y-4 gap-x-8 text-sm">
                             <div>
+                                <span className="block text-[hsl(var(--muted-foreground))] text-xs uppercase font-medium mb-1">Customer Name</span>
+                                <span className="font-semibold text-slate-700">{transformer?.customerName || transformer?.ownerName || '-'}</span>
+                            </div>
+
+                            <div>
+                                <span className="block text-[hsl(var(--muted-foreground))] text-xs uppercase font-medium mb-1">Capacity</span>
+                                <span className="font-semibold text-slate-700">{formatCapacity(transformer?.capacity)}</span>
+                            </div>
+
+                            <div>
+                                <span className="block text-[hsl(var(--muted-foreground))] text-xs uppercase font-medium mb-1">Sub Div</span>
+                                <span className="font-semibold text-slate-700">{transformer?.subDivision || '-'}</span>
+                            </div>
+
+                            <div>
+                                <span className="block text-[hsl(var(--muted-foreground))] text-xs uppercase font-medium mb-1">Sub Station</span>
+                                <span className="font-semibold text-slate-700">{transformer?.substation || '-'}</span>
+                            </div>
+
+                            <div>
+                                <span className="block text-[hsl(var(--muted-foreground))] text-xs uppercase font-medium mb-1">Feeder</span>
+                                <span className="font-semibold text-slate-700">{transformer?.feeder || '-'}</span>
+                            </div>
+
+                            <div>
                                 <span className="block text-[hsl(var(--muted-foreground))] text-xs uppercase font-medium mb-1">Location / Address</span>
                                 <div className="flex items-start gap-2">
                                     <MapPin size={16} className="mt-0.5 text-red-500 shrink-0" />
                                     <span className="font-semibold text-slate-700 text-left">{transformer?.address || '-'}</span>
                                 </div>
                             </div>
- 
-                            <div>
+
+                            <div className="col-span-2">
                                 <span className="block text-[hsl(var(--muted-foreground))] text-xs uppercase font-medium mb-1">Coordinates</span>
-                                <span className="font-mono bg-slate-50 px-2 py-1 rounded text-xs border font-semibold text-slate-700">
+                                <span className="font-mono bg-slate-50 px-2 py-1 rounded text-xs border font-semibold text-slate-700 inline-block">
                                     {(transformer?.lat !== null && transformer?.lat !== undefined && transformer?.lng !== null && transformer?.lng !== undefined) ? `${transformer.lat}, ${transformer.lng}` : '-'}
                                 </span>
-                            </div>
- 
-                            <div>
-                                <span className="block text-[hsl(var(--muted-foreground))] text-xs uppercase font-medium mb-1">Capacity</span>
-                                <span className="font-semibold text-slate-700">{formatCapacity(transformer?.capacity)}</span>
-                            </div>
- 
-                            <div>
-                                <span className="block text-[hsl(var(--muted-foreground))] text-xs uppercase font-medium mb-1">Make / Model</span>
-                                <span className="font-semibold text-slate-700">{transformer?.make || '-'}</span>
-                            </div>
- 
-                            <div>
-                                <span className="block text-[hsl(var(--muted-foreground))] text-xs uppercase font-medium mb-1">Install Date</span>
-                                <span className="font-semibold text-slate-700">{transformer?.installedOn ? formatDate(transformer.installedOn) : '-'}</span>
-                            </div>
- 
-                            <div>
-                                <span className="block text-[hsl(var(--muted-foreground))] text-xs uppercase font-medium mb-1">Last Maintenance</span>
-                                <span className="font-semibold text-slate-700">{transformer?.lastMaintenance ? formatDate(transformer.lastMaintenance) : '-'}</span>
                             </div>
                         </div>
                     </div>
